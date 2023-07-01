@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Description": "Посилка",
+      "Ref": "Parcel"
+    },
+    {
+      "Description": "Вантаж",
+      "Ref": "Cargo"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

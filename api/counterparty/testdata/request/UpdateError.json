@@ -1,0 +1,1 @@
+{"apiKey":"fake-token","modelName":"Counterparty","calledMethod":"update","methodProperties":{"Ref":"19710832-3af1-11eb-8513-b88303659df5","FirstName":"Іван","MiddleName":"Іванович","LastName":"Іванов","Phone":"380997979789","Email":"test@i.com","CounterpartyType":"PrivatePerson","CounterpartyProperty":"Recipient","CityRef":"8d5a980d-391c-11dd-90d9-001a92567626"}}

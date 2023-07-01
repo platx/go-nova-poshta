@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "Express Waybill document not found"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20000301849"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

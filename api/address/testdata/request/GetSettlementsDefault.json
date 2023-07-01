@@ -1,0 +1,1 @@
+{"apiKey":"fake-token","modelName":"Address","calledMethod":"getSettlements","methodProperties":{"AreaRef":"00000000-0000-0000-0000-000000000000","Ref":"00000000-0000-0000-0000-000000000000","RegionRef":"00000000-0000-0000-0000-000000000000","Warehouse":true,"FindByString":"Київ","Limit":10,"Page":1}}

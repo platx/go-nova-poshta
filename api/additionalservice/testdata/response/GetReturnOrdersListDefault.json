@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "data": [{
+    "OrderRef": "7cff4889-b15f-4464-a45f-ce10e7478a63",
+    "OrderNumber": "102-00003168",
+    "OrderStatus": "Прийняте",
+    "DocumentNumber": "20600000043015",
+    "CounterpartyRecipient": "Комунальник",
+    "ContactPersonRecipient": "Іванов Іван Іванович",
+    "AddressRecipient": "Ангеліної Паші вул. 45 кв. 12",
+    "DeliveryCost": "20",
+    "EstimatedDeliveryDate": "12/10/15 10:33",
+    "ExpressWaybillNumber": "59000042651620",
+    "ExpressWaybillStatus": "Відправлення у місті Київ"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

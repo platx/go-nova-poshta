@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "031a466a-de28-11ed-a60f-48df37b921db",
+      "Description": "Иванов Иван Иванович",
+      "LastName": "Иванов",
+      "FirstName": "Иван",
+      "MiddleName": "Иванович",
+      "Phones": "380997979781",
+      "AdditionalPhone": "",
+      "Email": "test@i.com"
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "Person already exists!"
+  ],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [
+    "30000801043"
+  ],
+  "infoCodes": []
+}

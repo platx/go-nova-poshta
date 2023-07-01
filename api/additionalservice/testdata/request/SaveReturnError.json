@@ -1,0 +1,8 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "AdditionalService",
+  "calledMethod": "CheckPossibilityChangeEW",
+  "methodProperties": {
+    "IntDocNumber": "20450500000012"
+  }
+}

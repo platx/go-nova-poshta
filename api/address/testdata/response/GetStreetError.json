@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "CityRef is not specified"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20000900767"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

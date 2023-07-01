@@ -1,0 +1,1 @@
+{"apiKey":"fake-token","modelName":"Address","calledMethod":"update","methodProperties":{"Ref":"00000000-0000-0000-0000-000000000000","CounterpartyRef":"00000000-0000-0000-0000-000000000000","StreetRef":"00000000-0000-0000-0000-000000000000","BuildingNumber":"7","Flat":"2","Note":null}}

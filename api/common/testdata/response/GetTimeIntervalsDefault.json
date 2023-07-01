@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Number": "CityDeliveryTimeInterval1",
+      "Start": "09:00",
+      "End": "12:00"
+    },
+    {
+      "Number": "CityDeliveryTimeInterval2",
+      "Start": "12:00",
+      "End": "15:00"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

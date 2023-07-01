@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "data": [{
+    "Ref" : "00000000-0000-0000-0000-000000000000",
+    "Description" : "Відмова Одержувача"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

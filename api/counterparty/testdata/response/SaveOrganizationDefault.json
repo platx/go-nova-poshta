@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "9b768ccd-dec8-11ed-a60f-48df37b921db",
+      "Description": "DeFacto",
+      "FirstName": "",
+      "MiddleName": "",
+      "LastName": "",
+      "Counterparty": "",
+      "OwnershipForm": "7f0f351d-2519-11df-be9a-000c291af1b3",
+      "OwnershipFormDescription": "ТОВ",
+      "EDRPOU": "12345678",
+      "CounterpartyType": "Organization"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

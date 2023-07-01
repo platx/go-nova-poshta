@@ -1,0 +1,97 @@
+{
+  "success": true,
+  "data": [
+    {
+      "SiteKey": "105",
+      "Description": "Відділення №1: вул. Пирогівський шлях, 135",
+      "DescriptionRu": "Отделение №1: ул. Пироговский путь, 135",
+      "ShortAddress": "Київ, Пирогівський шлях, 135",
+      "ShortAddressRu": "Киев, Пироговский путь, 135",
+      "Phone": "380800500609",
+      "TypeOfWarehouse": "9a68df70-0267-42a8-bb5c-37f427e36ee4",
+      "Ref": "1ec09d88-e1c2-11e3-8c4a-0050568002cf",
+      "Number": "1",
+      "CityRef": "8d5a980d-391c-11dd-90d9-001a92567626",
+      "CityDescription": "Київ",
+      "CityDescriptionRu": "Киев",
+      "SettlementRef": "e718a680-4b33-11e4-ab6d-005056801329",
+      "SettlementDescription": "Київ",
+      "SettlementAreaDescription": "Київська",
+      "SettlementRegionsDescription": "",
+      "SettlementTypeDescription": "місто",
+      "SettlementTypeDescriptionRu": "город",
+      "Longitude": "30.542884000000000",
+      "Latitude": "50.354786000000000",
+      "PostFinance": "1",
+      "BicycleParking": "1",
+      "PaymentAccess": "1",
+      "POSTerminal": "1",
+      "InternationalShipping": "1",
+      "SelfServiceWorkplacesCount": "1",
+      "TotalMaxWeightAllowed": "0",
+      "PlaceMaxWeightAllowed": "1100",
+      "SendingLimitationsOnDimensions": {
+        "Width": 170,
+        "Height": 220,
+        "Length": 600
+      },
+      "ReceivingLimitationsOnDimensions": {
+        "Width": 170,
+        "Height": 220,
+        "Length": 600
+      },
+      "Reception": {
+        "Monday": "08:00-21:00",
+        "Tuesday": "08:00-21:00",
+        "Wednesday": "08:00-21:00",
+        "Thursday": "08:00-21:00",
+        "Friday": "08:00-21:00",
+        "Saturday": "09:00-18:00",
+        "Sunday": "09:00-18:00"
+      },
+      "Delivery": {
+        "Monday": "08:00-21:00",
+        "Tuesday": "08:00-21:00",
+        "Wednesday": "08:00-21:00",
+        "Thursday": "08:00-21:00",
+        "Friday": "08:00-21:00",
+        "Saturday": "09:00-18:00",
+        "Sunday": "09:00-18:00"
+      },
+      "Schedule": {
+        "Monday": "08:00-21:00",
+        "Tuesday": "08:00-21:00",
+        "Wednesday": "08:00-21:00",
+        "Thursday": "08:00-21:00",
+        "Friday": "08:00-21:00",
+        "Saturday": "09:00-18:00",
+        "Sunday": "09:00-18:00"
+      },
+      "DistrictCode": "в1",
+      "WarehouseStatus": "Working",
+      "WarehouseStatusDate": "2022-03-22 00:00:00",
+      "CategoryOfWarehouse": "Branch",
+      "Direct": "",
+      "RegionCity": "КИЇВ ЗАХІД ПОСИЛКОВИЙ",
+      "WarehouseForAgent": "0",
+      "GeneratorEnabled": "1",
+      "MaxDeclaredCost": "0",
+      "WorkInMobileAwis": "0",
+      "DenyToSelect": "0",
+      "CanGetMoneyTransfer": "1",
+      "OnlyReceivingParcel": "0",
+      "PostMachineType": "",
+      "PostalCodeUA": "",
+      "WarehouseIndex": "11/1"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": {
+    "totalCount": 3922
+  },
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

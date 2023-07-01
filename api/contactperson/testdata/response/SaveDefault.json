@@ -1,0 +1,21 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "031a466a-de28-11ed-a60f-48df37b921db",
+      "Description": "Иванов Иван Иванович",
+      "LastName": "Иванов",
+      "FirstName": "Иван",
+      "MiddleName": "Иванович",
+      "Phones": "380997979781",
+      "Email": null
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

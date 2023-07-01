@@ -1,0 +1,22 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "6f8c7162-4b72-4b0a-88e5-906948c6a92f",
+      "Description": "Parcel Shop",
+      "DescriptionRu": "Parcel Shop"
+    },
+    {
+      "Ref": "841339c7-591a-42e2-8233-7a0a00f0ed6f",
+      "Description": "Поштове відділення",
+      "DescriptionRu": "Почтовое отделение"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

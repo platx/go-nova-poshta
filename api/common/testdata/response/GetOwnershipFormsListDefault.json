@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "82a5538f-4f94-11e8-a3de-005056b2fc3d",
+      "Description": "АБ",
+      "FullName": "Адвокатське бюро"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

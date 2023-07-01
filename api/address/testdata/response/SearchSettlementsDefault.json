@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "data": [
+    {
+      "TotalCount": 10,
+      "Addresses": [
+        {
+          "Present": "м. Київ, Київська обл.",
+          "Warehouses": 6231,
+          "MainDescription": "Київ",
+          "Area": "Київська",
+          "Region": "",
+          "SettlementTypeCode": "м.",
+          "Ref": "e718a680-4b33-11e4-ab6d-005056801329",
+          "DeliveryCity": "8d5a980d-391c-11dd-90d9-001a92567626",
+          "AddressDeliveryAllowed": true,
+          "StreetsAvailability": true,
+          "ParentRegionTypes": "область",
+          "ParentRegionCode": "обл.",
+          "RegionTypes": "",
+          "RegionTypesCode": ""
+        },
+        {
+          "Present": "с. Київець, Миколаївський р-н, Львівська обл.",
+          "Warehouses": 2,
+          "MainDescription": "Київець",
+          "Area": "Львівська",
+          "Region": "Миколаївський",
+          "SettlementTypeCode": "с.",
+          "Ref": "0df25497-4b3a-11e4-ab6d-005056801329",
+          "DeliveryCity": "6dbe5985-96d1-11ea-a970-b8830365ade4",
+          "AddressDeliveryAllowed": true,
+          "StreetsAvailability": false,
+          "ParentRegionTypes": "область",
+          "ParentRegionCode": "обл.",
+          "RegionTypes": "район",
+          "RegionTypesCode": "р-н"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

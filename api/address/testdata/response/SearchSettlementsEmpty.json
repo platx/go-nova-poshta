@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "data": [
+    {
+      "TotalCount": 0,
+      "Addresses": []
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "Document number is not correct"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20001401442"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

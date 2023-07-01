@@ -1,0 +1,24 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "AdditionalService",
+  "calledMethod": "save",
+  "methodProperties": {
+    "IntDocNumber": "206004560074695",
+    "PaymentMethod": "Cash",
+    "OrderType": "orderCargoReturn",
+    "Reason": "40a185f3-c6f3-4017-9c2a-2b9adb2e23ec",
+    "SubtypeReason": "a2cdd416-e32a-425d-9055-69f2f1c33a97",
+    "Note": null,
+    "Recipient": "6dbdc6dc-a16b-4335-bf36-6a111fd5b922",
+    "RecipientContactName": "Іванов Іван Іванович",
+    "RecipientPhone": "380685024447",
+    "PayerType": "Recipient",
+    "Customer": "Sender",
+    "ServiceType": "WarehouseWarehouse",
+    "RecipientSettlement": "265c18a5-aacd-4141-8cc0-9e425f8b2d90",
+    "RecipientSettlementStreet": "7665f753-5ba7-42af-a769-631a276663f9",
+    "BuildingNumber": "15",
+    "NoteAddressRecipient": "Щось від свого імені",
+    "RecipientWarehouse": "6cab2460-c949-4a72-be53-394dfae0535d"
+  }
+}
