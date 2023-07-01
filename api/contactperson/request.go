@@ -2,26 +2,25 @@ package contactperson
 
 import (
 	"github.com/google/uuid"
-	"github.com/platx/go-nova-poshta/custom/types"
 )
 
-type CreateData struct {
-	CounterpartyRef uuid.UUID   `json:"CounterpartyRef" xml:"CounterpartyRef"`
-	FirstName       string      `json:"FirstName" xml:"FirstName"`
-	LastName        string      `json:"LastName" xml:"LastName"`
-	MiddleName      string      `json:"MiddleName" xml:"MiddleName"`
-	Phone           types.Phone `json:"Phone" xml:"Phone"`
+type CreateReq struct {
+	CounterpartyRef uuid.UUID `json:"CounterpartyRef" xml:"CounterpartyRef"`
+	FirstName       string    `json:"FirstName" xml:"FirstName"`
+	LastName        string    `json:"LastName" xml:"LastName"`
+	MiddleName      *string   `json:"MiddleName" xml:"MiddleName"`
+	Phone           string    `json:"Phone" xml:"Phone"`
 }
 
-type UpdateData struct {
-	Ref             uuid.UUID   `json:"Ref" xml:"Ref"`
-	CounterpartyRef uuid.UUID   `json:"CounterpartyRef" xml:"CounterpartyRef"`
-	FirstName       string      `json:"FirstName" xml:"FirstName"`
-	LastName        string      `json:"LastName" xml:"LastName"`
-	MiddleName      string      `json:"MiddleName" xml:"MiddleName"`
-	Phone           types.Phone `json:"Phone" xml:"Phone"`
+type UpdateReq struct {
+	Ref             uuid.UUID `json:"Ref" xml:"Ref"`
+	CounterpartyRef uuid.UUID `json:"CounterpartyRef" xml:"CounterpartyRef"`
+	FirstName       string    `json:"FirstName" xml:"FirstName"`
+	LastName        string    `json:"LastName" xml:"LastName"`
+	MiddleName      *string   `json:"MiddleName" xml:"MiddleName"`
+	Phone           string    `json:"Phone" xml:"Phone"`
 }
 
-type DeleteData struct {
+type DeleteReq struct {
 	Ref uuid.UUID `json:"Ref" xml:"Ref"`
 }

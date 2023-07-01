@@ -1,6 +1,6 @@
 {
   "apiKey": "fake-token",
   "modelName": "AdditionalService",
-  "calledMethod": "getReturnOrdersList",
+  "calledMethod": "getChangeEWOrdersList",
   "methodProperties": {}
 }

@@ -1,6 +1,6 @@
 {
   "apiKey": "fake-token",
   "modelName": "AdditionalService",
-  "calledMethod": "getChangeEWOrdersList",
+  "calledMethod": "getRedirectionOrdersList",
   "methodProperties": {}
 }

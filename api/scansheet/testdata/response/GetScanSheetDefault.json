@@ -5,7 +5,13 @@
       "Ref": "19710832-3af1-11eb-8513-b88303659df5",
       "Number": "105-00003134",
       "DateTime": "2021-03-20T13:45:19+00:00",
-      "Printed": "111"
+      "Count": "111",
+      "CitySenderRef": "2c741d48-7979-49f9-b1fa-677fd46156fe",
+      "CitySender": "Київ",
+      "SenderAddressRef": "6bc8c591-ce05-459c-bea3-dcd10c7e4b25",
+      "SenderAddress": "м. Київ, Відділення №87 (до 30 кг), вул. Княжий Затон, 14б",
+      "SenderRef": "b316645f-739b-457c-941f-16fd98ac2e6c",
+      "Sender": "CBS-369138"
     }
   ],
   "errors": [],

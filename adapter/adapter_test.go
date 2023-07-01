@@ -4,15 +4,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
-	"github.com/platx/go-nova-poshta/testdata"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/platx/go-nova-poshta/custom/types"
 )
 
 func TestHTTPAdapter(t *testing.T) {
@@ -20,7 +23,7 @@ func TestHTTPAdapter(t *testing.T) {
 
 	httpClientMock := &mockHTTPClient{}
 
-	testCases := []struct {
+	for _, tc := range []struct {
 		name   string
 		format Format
 
@@ -37,9 +40,9 @@ func TestHTTPAdapter(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			name:         "WithRequestPropsAndResponse/Success",
+			name:         "WithRequestPropsWithResponse/Success",
 			format:       FormatJSON,
-			apiKey:       testdata.FakeApiKey,
+			apiKey:       "fake-token",
 			modelName:    "testModel",
 			calledMethod: "testMethod",
 			reqProps: map[string]interface{}{
@@ -48,7 +51,6 @@ func TestHTTPAdapter(t *testing.T) {
 			},
 
 			fakeResponseCode: http.StatusOK,
-			fakeResponseErr:  nil,
 			fakeResponseBody: response{
 				Success:      true,
 				Data:         map[string]interface{}{"data": "fake-data"},
@@ -61,9 +63,76 @@ func TestHTTPAdapter(t *testing.T) {
 				InfoCodes:    nil,
 			},
 		},
-	}
+		{
+			name:         "WithRequestPropsWithResponse/Error",
+			format:       FormatJSON,
+			apiKey:       "fake-token",
+			modelName:    "testModel",
+			calledMethod: "testMethod",
+			reqProps: map[string]interface{}{
+				"prop1": "value1",
+				"prop2": "value2",
+			},
 
-	for _, tc := range testCases {
+			fakeResponseCode: http.StatusBadRequest,
+			fakeResponseBody: response{
+				Success:      false,
+				Data:         map[string]interface{}{"data": "fake-data"},
+				Errors:       types.Messages[string]{"fake-error"},
+				Warnings:     nil,
+				Info:         nil,
+				MessageCodes: nil,
+				ErrorCodes:   types.Messages[string]{"fake-error"},
+				WarningCodes: nil,
+				InfoCodes:    nil,
+			},
+			expectedErr: errors.New("fake-error"),
+		},
+		{
+			name:         "WithoutRequestPropsWithResponse/Success",
+			format:       FormatJSON,
+			apiKey:       "fake-token",
+			modelName:    "testModel",
+			calledMethod: "testMethod",
+			reqProps:     nil,
+
+			fakeResponseCode: http.StatusOK,
+			fakeResponseBody: response{
+				Success:      true,
+				Data:         map[string]interface{}{"data": "fake-data"},
+				Errors:       nil,
+				Warnings:     nil,
+				Info:         nil,
+				MessageCodes: nil,
+				ErrorCodes:   nil,
+				WarningCodes: nil,
+				InfoCodes:    nil,
+			},
+		},
+		{
+			name:         "WithoutRequestPropsWithResponse/Failure",
+			format:       FormatJSON,
+			apiKey:       "fake-token",
+			modelName:    "testModel",
+			calledMethod: "testMethod",
+			reqProps:     nil,
+
+			fakeResponseCode: http.StatusOK,
+			fakeResponseBody: response{
+				Success:      true,
+				Data:         map[string]interface{}{"data": "fake-data"},
+				Errors:       nil,
+				Warnings:     nil,
+				Info:         nil,
+				MessageCodes: nil,
+				ErrorCodes:   nil,
+				WarningCodes: nil,
+				InfoCodes:    nil,
+			},
+			fakeResponseErr: errors.New("fake-error"),
+			expectedErr:     errors.New("fake-error"),
+		},
+	} {
 		t.Run(fmt.Sprintf("%s/%s", strings.ToUpper(string(tc.format)), tc.name), func(t *testing.T) {
 			fakeReq := request{
 				ApiKey:           tc.apiKey,
@@ -72,7 +141,7 @@ func TestHTTPAdapter(t *testing.T) {
 				MethodProperties: tc.reqProps,
 			}
 
-			c := NewAdapter(CreateConfig(
+			c := NewAdapter(NewConfig(
 				tc.apiKey,
 				WithHTTPClient(httpClientMock),
 				WithFormat(tc.format),
@@ -97,12 +166,17 @@ func TestHTTPAdapter(t *testing.T) {
 				assert.Equal(t, fakeReq.ApiKey, decReq.ApiKey)
 				assert.Equal(t, fakeReq.ModelName, decReq.ModelName)
 				assert.Equal(t, fakeReq.CalledMethod, decReq.CalledMethod)
-				assert.Equal(t, fakeReq.MethodProperties, decReq.MethodProperties)
+
+				if fakeReq.MethodProperties != nil {
+					assert.Equal(t, fakeReq.MethodProperties, decReq.MethodProperties)
+				} else {
+					assert.Equal(t, map[string]interface{}{}, decReq.MethodProperties)
+				}
 
 				return createHttpResponse(t, tc.format, tc.fakeResponseCode, tc.fakeResponseBody), tc.fakeResponseErr
 			}
 
-			err := c.Req(fakeReq.ModelName, fakeReq.CalledMethod, fakeReq.MethodProperties, tc.res)
+			err := c.Call(fakeReq.ModelName, fakeReq.CalledMethod, fakeReq.MethodProperties, tc.res)
 
 			if tc.expectedErr != nil {
 				require.Error(t, err)
@@ -112,16 +186,59 @@ func TestHTTPAdapter(t *testing.T) {
 		})
 	}
 
-	t.Run("Unknown", func(t *testing.T) {
-		httpClient, expectedFormat, apiKey := &mockHTTPClient{}, Format("unknown"), testdata.FakeApiKey
+	t.Run("UnknownFormat", func(t *testing.T) {
+		httpClient, expectedFormat, apiKey := &mockHTTPClient{}, Format("unknown"), "fake-token"
 
 		require.Panics(t, func() {
-			NewAdapter(CreateConfig(
+			NewAdapter(NewConfig(
 				apiKey,
 				WithHTTPClient(httpClient),
 				WithFormat(expectedFormat),
 			))
 		})
+	})
+
+	t.Run("EncodeFailed", func(t *testing.T) {
+		adapter := &httpAdapter{
+			serializer: &mockSerializer{
+				mockEncode: func(a any) (io.Reader, error) {
+					return nil, errors.New("fake-error")
+				},
+			},
+		}
+
+		require.ErrorContains(
+			t,
+			adapter.Call("testModel", "testMethod", nil, nil),
+			"fake-error",
+		)
+	})
+
+	t.Run("DecodeFailed", func(t *testing.T) {
+		adapter := &httpAdapter{
+			http: &mockHTTPClient{
+				mockDo: func(req *http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Body:       io.NopCloser(bytes.NewReader([]byte("fake-data"))),
+					}, nil
+				},
+			},
+			serializer: &mockSerializer{
+				mockEncode: func(a any) (io.Reader, error) {
+					return bytes.NewReader([]byte("fake-data")), nil
+				},
+				mockDecode: func(r io.Reader, a any) error {
+					return errors.New("fake-error")
+				},
+			},
+		}
+
+		require.ErrorContains(
+			t,
+			adapter.Call("testModel", "testMethod", nil, nil),
+			"fake-error",
+		)
 	})
 }
 
@@ -200,4 +317,17 @@ func createHttpResponse(t *testing.T, format Format, status int, data any) *http
 		StatusCode: status,
 		Body:       dataToStream(t, format, data),
 	}
+}
+
+type mockSerializer struct {
+	mockEncode func(any) (io.Reader, error)
+	mockDecode func(io.Reader, any) error
+}
+
+func (m *mockSerializer) encode(v any) (io.Reader, error) {
+	return m.mockEncode(v)
+}
+
+func (m *mockSerializer) decode(r io.Reader, v any) error {
+	return m.mockDecode(r, v)
 }

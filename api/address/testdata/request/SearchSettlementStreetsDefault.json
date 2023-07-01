@@ -1,1 +1,10 @@
-{"apiKey":"fake-token","modelName":"Address","calledMethod":"searchSettlementStreets","methodProperties":{"StreetName":"Хрещатик","SettlementRef":"00000000-0000-0000-0000-000000000000","Limit":10}}
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "searchSettlementStreets",
+  "methodProperties": {
+    "StreetName": "Хрещатик",
+    "SettlementRef": "478567ce-2a7f-4ebb-b673-8361b6974571",
+    "Limit": 10
+  }
+}

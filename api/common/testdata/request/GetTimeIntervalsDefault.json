@@ -1,1 +1,9 @@
-{"apiKey":"fake-token","modelName":"Common","calledMethod":"getTimeIntervals","methodProperties":{"RecipientCityRef":"00000000-0000-0000-0000-000000000000","DateTime":""}}
+{
+  "apiKey": "fake-token",
+  "modelName": "Common",
+  "calledMethod": "getTimeIntervals",
+  "methodProperties": {
+    "RecipientCityRef": "8d7b2a8d-2e12-47e7-ad5f-76453f9cbf09",
+    "DateTime": ""
+  }
+}

@@ -9,9 +9,6 @@
     "Reason": "40a185f3-c6f3-4017-9c2a-2b9adb2e23ec",
     "SubtypeReason": "a2cdd416-e32a-425d-9055-69f2f1c33a97",
     "Note": "Произвольное описание",
-    "RecipientSettlement": "6cab2460-c949-4a72-be53-394dfae0535d",
-    "RecipientSettlementStreet": "6dbdc6dc-a16b-4335-bf36-6a111fd5b922",
-    "BuildingNumber": "4",
-    "NoteAddressRecipient": "2"
+    "RecipientWarehouse": "6cab2460-c949-4a72-be53-394dfae0535d"
   }
 }

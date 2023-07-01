@@ -1,1 +1,10 @@
-{"apiKey":"test-token","modelName":"Counterparty","calledMethod":"save","methodProperties":{"CounterpartyType":"Organization","CounterpartyProperty":"Recipient","EDRPOU":"12345678"}}
+{
+  "apiKey": "fake-token",
+  "modelName": "Counterparty",
+  "calledMethod": "save",
+  "methodProperties": {
+    "CounterpartyType": "Organization",
+    "CounterpartyProperty": "Recipient",
+    "EDRPOU": "12345678"
+  }
+}

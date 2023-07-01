@@ -2,32 +2,31 @@ package common
 
 import (
 	"errors"
-	"fmt"
+	"path/filepath"
+	"testing"
+
 	"github.com/google/uuid"
-	"github.com/platx/go-nova-poshta/adapter"
-	"github.com/platx/go-nova-poshta/custom/types"
-	"github.com/platx/go-nova-poshta/testdata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"os"
-	"testing"
+
+	"github.com/platx/go-nova-poshta/adapter"
+	"github.com/platx/go-nova-poshta/custom/enum"
+	"github.com/platx/go-nova-poshta/custom/types"
+	"github.com/platx/go-nova-poshta/testdata"
 )
 
-func TestApi(t *testing.T) {
+func TestModel(t *testing.T) {
 	t.Parallel()
 
-	testCases := []apiTestCase{
-		{
-			name:   "GetTimeIntervalsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetTimeIntervals(GetTimeIntervalsFilter{
-					RecipientCityRef: uuid.MustParse(testdata.FakeUUID),
+	testCases := map[string]testdata.ApiTestParams[Model]{
+		"GetTimeIntervalsDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetTimeIntervals(GetTimeIntervalsReq{
+					RecipientCityRef: uuid.MustParse("8d7b2a8d-2e12-47e7-ad5f-76453f9cbf09"),
 				})
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetTimeIntervalsResult)
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetTimeIntervalsRes)
 
 				assert.Len(t, typedRes, 2)
 				assert.Equal(t, typedRes[0].Number, "CityDeliveryTimeInterval1")
@@ -36,59 +35,48 @@ func TestApi(t *testing.T) {
 				assert.Equal(t, typedRes[1].Number, "CityDeliveryTimeInterval2")
 				assert.Equal(t, typedRes[1].Start, "12:00")
 				assert.Equal(t, typedRes[1].End, "15:00")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetTimeIntervalsError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetTimeIntervals(GetTimeIntervalsFilter{})
-			},
-			expectErr: errors.New("DateTime cannot be less then now"),
+		"GetTimeIntervalsError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetTimeIntervals(GetTimeIntervalsReq{})
+			}),
+			testdata.WithExpectErr[Model](errors.New("DateTime cannot be less then now")),
 		},
-		{
-			name:   "GetCargoTypesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetCargoTypes()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(ListItemsResult)
+		"GetCargoTypesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetCargoTypes()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(ListItemsRes[enum.CargoType])
 
 				assert.Len(t, typedRes, 2)
-				assert.Equal(t, typedRes[0].Ref, "Parcel")
+				assert.Equal(t, typedRes[0].Ref, enum.CargoTypeParcel)
 				assert.Equal(t, typedRes[0].Description, "Посилка")
-				assert.Equal(t, typedRes[1].Ref, "Cargo")
+				assert.Equal(t, typedRes[1].Ref, enum.CargoTypeCargo)
 				assert.Equal(t, typedRes[1].Description, "Вантаж")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetBackwardDeliveryCargoTypesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetBackwardDeliveryCargoTypes()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(ListItemsResult)
+		"GetBackwardDeliveryCargoTypesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetBackwardDeliveryCargoTypes()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(ListItemsRes[enum.CargoType])
 
 				assert.Len(t, typedRes, 2)
-				assert.Equal(t, typedRes[0].Ref, "Documents")
+				assert.Equal(t, typedRes[0].Ref, enum.CargoTypeDocuments)
 				assert.Equal(t, typedRes[0].Description, "Документи")
-				assert.Equal(t, typedRes[1].Ref, "Money")
+				assert.Equal(t, typedRes[1].Ref, enum.CargoTypeMoney)
 				assert.Equal(t, typedRes[1].Description, "Грошовий переказ")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetPalletsListDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetPalletsList()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetPalletsListResult)
+		"GetPalletsListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetPalletsList()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetPalletsListRes)
 
 				assert.Len(t, typedRes, 2)
 				assert.Equal(t, typedRes[0].Ref, uuid.MustParse("627b0c23-d110-11dd-8c0d-001d92f78697"))
@@ -99,34 +87,28 @@ func TestApi(t *testing.T) {
 				assert.Equal(t, typedRes[1].Description, "Палета від 1 м2 до 1,49 м2 (612)")
 				assert.Equal(t, typedRes[1].DescriptionRu, "Паллета от 1 м2 до 1,49 м2")
 				assert.Equal(t, typedRes[1].Weight, types.FloatString(612.00))
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetTypesOfPayersForRedeliveryDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetTypesOfPayersForRedelivery()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(ListItemsResult)
+		"GetTypesOfPayersForRedeliveryDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetTypesOfPayersForRedelivery()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(ListItemsRes[string])
 
 				assert.Len(t, typedRes, 2)
 				assert.Equal(t, typedRes[0].Ref, "Sender")
 				assert.Equal(t, typedRes[0].Description, "Відправник")
 				assert.Equal(t, typedRes[1].Ref, "Recipient")
 				assert.Equal(t, typedRes[1].Description, "Одержувач")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetPackListDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetPackList()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetPackListResult)
+		"GetPackListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetPackList()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetPackListRes)
 
 				assert.Len(t, typedRes, 1)
 				assert.Equal(t, typedRes[0].Ref, uuid.MustParse("0446498a-7814-4a70-b262-f35c9c51cd85"))
@@ -137,18 +119,15 @@ func TestApi(t *testing.T) {
 				assert.Equal(t, typedRes[0].Height, types.FloatString(0.0))
 				assert.Equal(t, typedRes[0].VolumetricWeight, types.FloatString(0.0))
 				assert.Equal(t, typedRes[0].TypeOfPacking, "")
-				assert.Equal(t, typedRes[0].PackagingForPlace, types.BoolString(false))
-			},
-			expectErr: nil,
+				assert.Equal(t, typedRes[0].PackagingForPlace, types.IntString(0))
+			}),
 		},
-		{
-			name:   "GetTiresWheelsListDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetTiresWheelsList()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetTiresWheelsListResult)
+		"GetTiresWheelsListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetTiresWheelsList()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetTiresWheelsListRes)
 
 				assert.Len(t, typedRes, 1)
 				assert.Equal(t, typedRes[0].Ref, uuid.MustParse("20f7b625-9add-11e3-b441-0050568002cf"))
@@ -156,121 +135,71 @@ func TestApi(t *testing.T) {
 				assert.Equal(t, typedRes[0].DescriptionRu, "Шина грузовая R 22,5")
 				assert.Equal(t, typedRes[0].Weight, types.FloatString(94.0))
 				assert.Equal(t, typedRes[0].DescriptionType, TiresWheelsType("Tires"))
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetCargoDescriptionListDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetCargoDescriptionList()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetCargoDescriptionListResult)
+		"GetCargoDescriptionListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetCargoDescriptionList()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetCargoDescriptionListRes)
 
 				assert.Len(t, typedRes, 1)
 				assert.Equal(t, typedRes[0].Ref, uuid.MustParse("8f469737-33e4-11e3-b441-0050568002cf"))
 				assert.Equal(t, typedRes[0].Description, " док-станція")
 				assert.Equal(t, typedRes[0].DescriptionRu, " док-станция")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetMessageCodeTextDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetMessageCodeText()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetMessageCodeTextResult)
+		"GetMessageCodeTextDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetMessageCodeText()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetMessageCodeTextRes)
 
 				assert.Len(t, typedRes, 1)
 				assert.Equal(t, typedRes[0].MessageCode, "20000100004")
 				assert.Equal(t, typedRes[0].MessageText, "User with email exists")
 				assert.Equal(t, typedRes[0].MessageDescriptionRU, "Пользователь с таким Email уже существует")
 				assert.Equal(t, typedRes[0].MessageDescriptionUA, "Користувач з таким Email все існує")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetServiceTypesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetServiceTypes()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(ListItemsResult)
+		"GetServiceTypesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetServiceTypes()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(ListItemsRes[enum.ServiceType])
 
 				assert.Len(t, typedRes, 1)
-				assert.Equal(t, typedRes[0].Ref, "DoorsDoors")
+				assert.Equal(t, typedRes[0].Ref, enum.ServiceTypeDoorsDoors)
 				assert.Equal(t, typedRes[0].Description, "Адреса-Адреса")
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetOwnershipFormsListDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetOwnershipFormsList()
-			},
-			resCallback: func(res any) {
-				typedRes := res.(GetOwnershipFormsListResult)
+		"GetOwnershipFormsListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetOwnershipFormsList()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(GetOwnershipFormsListRes)
 
 				assert.Len(t, typedRes, 1)
 				assert.Equal(t, typedRes[0].Ref, uuid.MustParse("82a5538f-4f94-11e8-a3de-005056b2fc3d"))
 				assert.Equal(t, typedRes[0].Description, "АБ")
 				assert.Equal(t, typedRes[0].FullName, "Адвокатське бюро")
-			},
-			expectErr: nil,
+			}),
 		},
 	}
 
-	for _, tc := range testCases {
-		stubFileName := fmt.Sprintf("%s.%s", tc.name, tc.format)
+	for name, tc := range testCases {
+		testDataPath, err := filepath.Abs("./testdata")
 
-		mockBasePath := "./testdata"
-		reqPath := fmt.Sprintf("%s/request/%s", mockBasePath, stubFileName)
-
-		var reqBody []byte
-		if _, err := os.Stat(reqPath); err == nil {
-			reqBody, err = os.ReadFile(reqPath)
-			require.NoError(t, err)
-		}
-
-		resPath := fmt.Sprintf("%s/response/%s", mockBasePath, stubFileName)
-
-		var resBody []byte
-		_, err := os.Stat(resPath)
-		require.NoError(t, err)
-		resBody, err = os.ReadFile(resPath)
 		require.NoError(t, err)
 
-		testCase := testdata.ApiTestCase{
-			Name:           tc.name,
-			ReqBody:        reqBody,
-			ReqCallback:    tc.reqCallback,
-			ResBody:        resBody,
-			ResCallback:    tc.resCallback,
-			ExpectErr:      tc.expectErr,
-			HttpStatusCode: http.StatusOK,
-		}
+		tc = append(tc, testdata.WithTestDataPath[Model](testDataPath))
 
-		c := NewApi(adapter.NewAdapter(adapter.CreateConfig(
-			testdata.FakeApiKey,
-			adapter.WithHTTPClient(testdata.CreateFakeHTTPClient(t, testCase)),
-			adapter.WithFormat(adapter.FormatJSON),
-		)))
-
-		testdata.RunApiTestCase(t, testCase, c)
+		tc.Run(t, name, func(adp adapter.RequestAdapter) Model {
+			return NewModel(adp)
+		})
 	}
-}
-
-type apiTestCase struct {
-	name   string
-	format testdata.Format
-
-	reqCallback func(api any) (any, error)
-	resCallback func(res any)
-
-	expectErr error
 }

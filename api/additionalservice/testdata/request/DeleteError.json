@@ -1,14 +1,8 @@
 {
   "apiKey": "fake-token",
   "modelName": "AdditionalService",
-  "calledMethod": "save",
+  "calledMethod": "delete",
   "methodProperties": {
-    "IntDocNumber": "206004560074695",
-    "PaymentMethod": "Cash",
-    "OrderType": "orderCargoReturn",
-    "Reason": "40a185f3-c6f3-4017-9c2a-2b9adb2e23ec",
-    "SubtypeReason": "a2cdd416-e32a-425d-9055-69f2f1c33a97",
-    "Note": null,
-    "ReturnAddressRef": "e4d6be4e-182a-43b2-884a-1904fb8d0101"
+    "Ref": "40a185f3-c6f3-4017-9c2a-2b9adb2e23ec"
   }
 }

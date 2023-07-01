@@ -2,6 +2,7 @@ package address
 
 import (
 	"github.com/google/uuid"
+
 	"github.com/platx/go-nova-poshta/custom/types"
 )
 
@@ -22,12 +23,12 @@ type SearchSettlementAddress struct {
 	RegionTypesCode        string    `json:"RegionTypesCode" xml:"RegionTypesCode"`
 }
 
-type SearchSettlementResultItem struct {
+type SearchSettlementResItem struct {
 	TotalCount int                       `json:"TotalCount" xml:"TotalCount"`
 	Addresses  []SearchSettlementAddress `json:"Addresses" xml:"Addresses"`
 }
 
-type SearchSettlementResult []SearchSettlementResultItem
+type SearchSettlementRes []SearchSettlementResItem
 
 type Location struct {
 	Latitude  float64 `json:"lat" xml:"lat"`
@@ -45,23 +46,23 @@ type SettlementStreetAddress struct {
 	Location                      Location  `json:"Location" xml:"Location"`
 }
 
-type SettlementStreetsResultItem struct {
+type SettlementStreetsResItem struct {
 	TotalCount int                       `json:"TotalCount" xml:"TotalCount"`
 	Addresses  []SettlementStreetAddress `json:"Addresses" xml:"Addresses"`
 }
 
-type SearchSettlementStreetsResult []SettlementStreetsResultItem
+type SearchSettlementStreetsRes []SettlementStreetsResItem
 
 type ExistAddress struct {
 	Ref         uuid.UUID `json:"Ref" xml:"Ref"`
 	Description string    `json:"Description" xml:"Description"`
 }
 
-type SaveResult []ExistAddress
+type SaveRes []ExistAddress
 
-type DeleteResult []DeleteData
+type DeleteRes []DeleteReq
 
-type GetSettlementsResultItem struct {
+type GetSettlementsResItem struct {
 	Ref                               uuid.UUID         `json:"Ref" xml:"Ref"`
 	SettlementType                    uuid.UUID         `json:"SettlementType" xml:"SettlementType"`
 	Latitude                          types.FloatString `json:"Latitude" xml:"Latitude"`
@@ -80,21 +81,21 @@ type GetSettlementsResultItem struct {
 	AreaDescription                   string            `json:"AreaDescription" xml:"AreaDescription"`
 	AreaDescriptionRu                 string            `json:"AreaDescriptionRu" xml:"AreaDescriptionRu"`
 	AreaDescriptionTranslit           string            `json:"AreaDescriptionTranslit" xml:"AreaDescriptionTranslit"`
-	Index1                            string            `json:"Index1" xml:"Index1"`                     // TODO: is it int string?
-	Index2                            string            `json:"Index2" xml:"Index2"`                     // TODO: is it int string?
-	IndexCOATSU1                      string            `json:"IndexCOATSU1" xml:"IndexCOATSU1"`         // TODO: is it int string?
-	Delivery1                         types.BoolString  `json:"Delivery1" xml:"Delivery1"`               // TODO: handle empty string
-	Delivery2                         types.BoolString  `json:"Delivery2" xml:"Delivery2"`               // TODO: handle empty string
-	Delivery3                         types.BoolString  `json:"Delivery3" xml:"Delivery3"`               // TODO: handle empty string
-	Delivery4                         types.BoolString  `json:"Delivery4" xml:"Delivery4"`               // TODO: handle empty string
-	Delivery5                         types.BoolString  `json:"Delivery5" xml:"Delivery5"`               // TODO: handle empty string
-	Delivery6                         types.BoolString  `json:"Delivery6" xml:"Delivery6"`               // TODO: handle empty string
-	Delivery7                         types.BoolString  `json:"Delivery7" xml:"Delivery7"`               // TODO: handle empty string
-	SpecialCashCheck                  int               `json:"SpecialCashCheck" xml:"SpecialCashCheck"` // TODO: is it bool?
+	Index1                            string            `json:"Index1" xml:"Index1"`
+	Index2                            string            `json:"Index2" xml:"Index2"`
+	IndexCOATSU1                      string            `json:"IndexCOATSU1" xml:"IndexCOATSU1"`
+	Delivery1                         types.BoolString  `json:"Delivery1" xml:"Delivery1"`
+	Delivery2                         types.BoolString  `json:"Delivery2" xml:"Delivery2"`
+	Delivery3                         types.BoolString  `json:"Delivery3" xml:"Delivery3"`
+	Delivery4                         types.BoolString  `json:"Delivery4" xml:"Delivery4"`
+	Delivery5                         types.BoolString  `json:"Delivery5" xml:"Delivery5"`
+	Delivery6                         types.BoolString  `json:"Delivery6" xml:"Delivery6"`
+	Delivery7                         types.BoolString  `json:"Delivery7" xml:"Delivery7"`
+	SpecialCashCheck                  types.BoolInt     `json:"SpecialCashCheck" xml:"SpecialCashCheck"`
 	Warehouse                         types.BoolString  `json:"Warehouse" xml:"Warehouse"`
 }
 
-type GetSettlementsResult []GetSettlementsResultItem
+type GetSettlementsRes []GetSettlementsResItem
 
 type City struct {
 	Ref                         uuid.UUID        `json:"Ref" xml:"Ref"`
@@ -111,15 +112,15 @@ type City struct {
 	SettlementType              uuid.UUID        `json:"SettlementType" xml:"SettlementType"`
 	IsBranch                    types.BoolString `json:"IsBranch" xml:"IsBranch"`
 	PreventEntryNewStreetsUser  types.BoolString `json:"PreventEntryNewStreetsUser" xml:"PreventEntryNewStreetsUser"`
-	CityID                      string           `json:"CityID" xml:"CityID"` // TODO: is it int string?
+	CityID                      types.IntString  `json:"CityID" xml:"CityID"`
 	SettlementTypeDescription   string           `json:"SettlementTypeDescription" xml:"SettlementTypeDescription"`
 	SettlementTypeDescriptionRu string           `json:"SettlementTypeDescriptionRu" xml:"SettlementTypeDescriptionRu"`
-	SpecialCashCheck            int              `json:"SpecialCashCheck" xml:"SpecialCashCheck"` // TODO: is it bool?
+	SpecialCashCheck            types.BoolInt    `json:"SpecialCashCheck" xml:"SpecialCashCheck"`
 	AreaDescription             string           `json:"AreaDescription" xml:"AreaDescription"`
 	AreaDescriptionRu           string           `json:"AreaDescriptionRu" xml:"AreaDescriptionRu"`
 }
 
-type GetCitiesResult []City
+type GetCitiesRes []City
 
 type Area struct {
 	Ref           uuid.UUID `json:"Ref" xml:"Ref"`
@@ -128,7 +129,7 @@ type Area struct {
 	Description   string    `json:"Description" xml:"Description"`
 }
 
-type GetAreasResult []Area
+type GetAreasRes []Area
 
 type Dimensions struct {
 	Width  int `json:"Width" xml:"Width"`
@@ -137,22 +138,22 @@ type Dimensions struct {
 }
 
 type DayHours struct {
-	Monday    string `json:"Monday" xml:"Monday"`       // TODO: create a custom type
-	Tuesday   string `json:"Tuesday" xml:"Tuesday"`     // TODO: create a custom type
-	Wednesday string `json:"Wednesday" xml:"Wednesday"` // TODO: create a custom type
-	Thursday  string `json:"Thursday" xml:"Thursday"`   // TODO: create a custom type
-	Friday    string `json:"Friday" xml:"Friday"`       // TODO: create a custom type
-	Saturday  string `json:"Saturday" xml:"Saturday"`   // TODO: create a custom type
-	Sunday    string `json:"Sunday" xml:"Sunday"`       // TODO: create a custom type
+	Monday    string `json:"Monday" xml:"Monday"`
+	Tuesday   string `json:"Tuesday" xml:"Tuesday"`
+	Wednesday string `json:"Wednesday" xml:"Wednesday"`
+	Thursday  string `json:"Thursday" xml:"Thursday"`
+	Friday    string `json:"Friday" xml:"Friday"`
+	Saturday  string `json:"Saturday" xml:"Saturday"`
+	Sunday    string `json:"Sunday" xml:"Sunday"`
 }
 
 type Warehouse struct {
-	SiteKey                          string            `json:"SiteKey" xml:"siteKey"` // TODO: is it int string?
+	SiteKey                          types.IntString   `json:"SiteKey" xml:"siteKey"`
 	Description                      string            `json:"Description" xml:"description"`
 	DescriptionRu                    string            `json:"DescriptionRu" xml:"DescriptionRu"`
 	ShortAddress                     string            `json:"ShortAddress" xml:"ShortAddress"`
 	ShortAddressRu                   string            `json:"ShortAddressRu" xml:"ShortAddressRu"`
-	Phone                            types.Phone       `json:"Phone" xml:"Phone"`
+	Phone                            string            `json:"Phone" xml:"Phone"`
 	TypeOfWarehouse                  uuid.UUID         `json:"TypeOfWarehouse" xml:"TypeOfWarehouse"`
 	Ref                              uuid.UUID         `json:"Ref" xml:"Ref"`
 	Number                           types.IntString   `json:"Number" xml:"Number"`
@@ -172,7 +173,7 @@ type Warehouse struct {
 	PaymentAccess                    types.BoolString  `json:"PaymentAccess" xml:"PaymentAccess"`
 	POSTerminal                      types.BoolString  `json:"POSTerminal" xml:"POSTerminal"`
 	InternationalShipping            types.BoolString  `json:"InternationalShipping" xml:"InternationalShipping"`
-	SelfServiceWorkplacesCount       types.IntString   `json:"SelfServiceWorkplacesCount" xml:"SelfServiceWorkplacesCount"`
+	SelfServiceWorkplacesCount       types.BoolString  `json:"SelfServiceWorkplacesCount" xml:"SelfServiceWorkplacesCount"`
 	TotalMaxWeightAllowed            types.IntString   `json:"TotalMaxWeightAllowed" xml:"TotalMaxWeightAllowed"`
 	PlaceMaxWeightAllowed            types.IntString   `json:"PlaceMaxWeightAllowed" xml:"PlaceMaxWeightAllowed"`
 	SendingLimitationsOnDimensions   Dimensions        `json:"SendingLimitationsOnDimensions" xml:"SendingLimitationsOnDimensions"`
@@ -181,9 +182,9 @@ type Warehouse struct {
 	Delivery                         DayHours          `json:"Delivery" xml:"Delivery"`
 	Schedule                         DayHours          `json:"Schedule" xml:"Schedule"`
 	DistrictCode                     string            `json:"DistrictCode" xml:"DistrictCode"`
-	WarehouseStatus                  string            `json:"WarehouseStatus" xml:"WarehouseStatus"`         // TODO: create enum
-	WarehouseStatusDate              string            `json:"WarehouseStatusDate" xml:"WarehouseStatusDate"` // TODO: create custom type
-	CategoryOfWarehouse              string            `json:"CategoryOfWarehouse" xml:"CategoryOfWarehouse"` // TODO: create enum
+	WarehouseStatus                  string            `json:"WarehouseStatus" xml:"WarehouseStatus"`
+	WarehouseStatusDate              types.DateTime    `json:"WarehouseStatusDate" xml:"WarehouseStatusDate"`
+	CategoryOfWarehouse              string            `json:"CategoryOfWarehouse" xml:"CategoryOfWarehouse"`
 	Direct                           string            `json:"Direct" xml:"Direct"`
 	RegionCity                       string            `json:"RegionCity" xml:"RegionCity"`
 	WarehouseForAgent                types.BoolString  `json:"WarehouseForAgent" xml:"WarehouseForAgent"`
@@ -198,7 +199,7 @@ type Warehouse struct {
 	WarehouseIndex                   string            `json:"WarehouseIndex" xml:"WarehouseIndex"`
 }
 
-type GetWarehousesResult []Warehouse
+type GetWarehousesRes []Warehouse
 
 type WarehouseType struct {
 	Ref           uuid.UUID `json:"Ref" xml:"Ref"`
@@ -206,7 +207,7 @@ type WarehouseType struct {
 	DescriptionRu string    `json:"DescriptionRu" xml:"DescriptionRu"`
 }
 
-type GetWarehouseTypesResult []WarehouseType
+type GetWarehouseTypesRes []WarehouseType
 
 type Street struct {
 	Ref            uuid.UUID `json:"Ref" xml:"Ref"`
@@ -215,4 +216,4 @@ type Street struct {
 	StreetsType    string    `json:"StreetsType" xml:"StreetsType"`
 }
 
-type GetStreetResult []Street
+type GetStreetRes []Street

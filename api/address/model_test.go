@@ -2,35 +2,34 @@ package address
 
 import (
 	"errors"
-	"fmt"
+	"path/filepath"
+	"testing"
+
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/platx/go-nova-poshta/adapter"
 	"github.com/platx/go-nova-poshta/custom/enum"
 	"github.com/platx/go-nova-poshta/custom/types"
 	"github.com/platx/go-nova-poshta/testdata"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"net/http"
-	"os"
-	"testing"
+	"github.com/platx/go-nova-poshta/utils"
 )
 
-func TestApi(t *testing.T) {
+func TestModel(t *testing.T) {
 	t.Parallel()
 
-	testCases := []apiTestCase{
-		{
-			name:   "SearchSettlementsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SearchSettlements(SearchSettlementsFilter{
+	testCases := map[string]testdata.ApiTestParams[Model]{
+		"SearchSettlementsDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SearchSettlements(SearchSettlementsReq{
 					CityName: "Київ",
-					Limit:    ptr(10),
-					Page:     ptr(1),
+					Limit:    utils.PTR(10),
+					Page:     utils.PTR(1),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SearchSettlementResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SearchSettlementRes{{
 					TotalCount: 10,
 					Addresses: []SearchSettlementAddress{{
 						Present:                "м. Київ, Київська обл.",
@@ -60,37 +59,31 @@ func TestApi(t *testing.T) {
 						RegionTypesCode:        "р-н",
 					}},
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SearchSettlementsEmpty",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SearchSettlements(SearchSettlementsFilter{
+		"SearchSettlementsEmpty": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SearchSettlements(SearchSettlementsReq{
 					CityName: "Київ",
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SearchSettlementResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SearchSettlementRes{{
 					TotalCount: 0,
 					Addresses:  []SearchSettlementAddress{},
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SearchSettlementStreetsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SearchSettlementStreets(SearchSettlementStreetsFilter{
+		"SearchSettlementStreetsDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SearchSettlementStreets(SearchSettlementStreetsReq{
 					StreetName:    "Хрещатик",
-					SettlementRef: uuid.MustParse(testdata.FakeUUID),
-					Limit:         ptr(10),
+					SettlementRef: uuid.MustParse("478567ce-2a7f-4ebb-b673-8361b6974571"),
+					Limit:         utils.PTR(10),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SearchSettlementStreetsResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SearchSettlementStreetsRes{{
 					TotalCount: 1,
 					Addresses: []SettlementStreetAddress{{
 						SettlementRef:                 uuid.MustParse("e718a680-4b33-11e4-ab6d-005056801329"),
@@ -106,37 +99,31 @@ func TestApi(t *testing.T) {
 						},
 					}},
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SearchSettlementStreetsError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SearchSettlementStreets(SearchSettlementStreetsFilter{
+		"SearchSettlementStreetsError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SearchSettlementStreets(SearchSettlementStreetsReq{
 					StreetName:    "Хрещатик",
-					SettlementRef: uuid.MustParse(testdata.FakeUUID),
+					SettlementRef: uuid.MustParse("478567ce-2a7f-4ebb-b673-8361b6974571"),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("SettlementRef is invalid"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("SettlementRef is invalid")),
 		},
-		{
-			name:   "GetSettlementsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetSettlements(GetSettlementsFilter{
-					AreaRef:      ptr(uuid.MustParse(testdata.FakeUUID)),
-					Ref:          ptr(uuid.MustParse(testdata.FakeUUID)),
-					RegionRef:    ptr(uuid.MustParse(testdata.FakeUUID)),
-					Warehouse:    ptr(true),
-					FindByString: ptr("Київ"),
-					Limit:        ptr(10),
-					Page:         ptr(1),
+		"GetSettlementsDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetSettlements(GetSettlementsReq{
+					AreaRef:      utils.PTR(uuid.MustParse("478567ce-2a7f-4ebb-b673-8361b6974571")),
+					Ref:          utils.PTR(uuid.MustParse("34a6bbc1-249d-4453-8d61-5c1c1dc52924")),
+					RegionRef:    utils.PTR(uuid.MustParse("11177059-be78-49ea-bf19-64114b1e04ba")),
+					Warehouse:    utils.PTR(true),
+					FindByString: utils.PTR("Київ"),
+					Limit:        utils.PTR(10),
+					Page:         utils.PTR(1),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetSettlementsResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetSettlementsRes{{
 					Ref:                               uuid.MustParse("0e451e40-4b3a-11e4-ab6d-005056801329"),
 					SettlementType:                    uuid.MustParse("563ced13-f210-11e3-8c4a-0050568002cf"),
 					Latitude:                          types.FloatString(49.605372000000000),
@@ -161,122 +148,102 @@ func TestApi(t *testing.T) {
 					Delivery1:                         true,
 					Delivery3:                         true,
 					Delivery5:                         true,
-					SpecialCashCheck:                  1,
+					SpecialCashCheck:                  true,
 					Warehouse:                         true,
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SaveDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Save(CreateData{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
+		"SaveDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Save(CreateReq{
+					CounterpartyRef: uuid.MustParse("59498e99-f28c-4f0f-bff3-d77fe76d0bf2"),
+					StreetRef:       uuid.MustParse("23493a78-b494-44ac-a955-c1a5373880fe"),
 					BuildingNumber:  "7",
-					Flat:            "2",
-					Note:            ptr("комментарий"),
+					Flat:            utils.PTR("2"),
+					Note:            utils.PTR("комментарий"),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SaveResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
 					Ref:         uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
 					Description: "1-а Вишнева вул. 7 кв. 2 Комментарий",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SaveError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Save(CreateData{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
+		"SaveError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Save(CreateReq{
+					CounterpartyRef: uuid.MustParse("59498e99-f28c-4f0f-bff3-d77fe76d0bf2"),
+					StreetRef:       uuid.MustParse("23493a78-b494-44ac-a955-c1a5373880fe"),
 					BuildingNumber:  "7",
-					Flat:            "2",
+					Flat:            utils.PTR("2"),
 					Note:            nil,
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("StreetRef is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("StreetRef is not specified")),
 		},
-		{
-			name:   "DeleteDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Delete(DeleteData{
-					Ref: uuid.MustParse(testdata.FakeUUID),
+		"DeleteDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, DeleteResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, DeleteRes{{
 					Ref: uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "DeleteError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Delete(DeleteData{
-					Ref: uuid.MustParse(testdata.FakeUUID),
+		"DeleteError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("Ref is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("Ref is not specified")),
 		},
-		{
-			name:   "UpdateDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Update(UpdateData{
-					Ref:             uuid.MustParse(testdata.FakeUUID),
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
+		"UpdateDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Update(UpdateReq{
+					Ref:             uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
+					CounterpartyRef: uuid.MustParse("59498e99-f28c-4f0f-bff3-d77fe76d0bf2"),
+					StreetRef:       uuid.MustParse("23493a78-b494-44ac-a955-c1a5373880fe"),
 					BuildingNumber:  "7",
-					Flat:            "2",
-					Note:            ptr("комментарий"),
+					Flat:            utils.PTR("2"),
+					Note:            utils.PTR("комментарий"),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SaveResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
 					Ref:         uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
 					Description: "1-а Вишнева вул. 7 кв. 2 Комментарий",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "UpdateError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Update(UpdateData{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
+		"UpdateError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Update(UpdateReq{
+					Ref:             uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
+					CounterpartyRef: uuid.MustParse("59498e99-f28c-4f0f-bff3-d77fe76d0bf2"),
+					StreetRef:       uuid.MustParse("23493a78-b494-44ac-a955-c1a5373880fe"),
 					BuildingNumber:  "7",
-					Flat:            "2",
+					Flat:            utils.PTR("2"),
 					Note:            nil,
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("StreetRef is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("StreetRef is not specified")),
 		},
-		{
-			name:   "GetCitiesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetCities(GetCitiesFilter{
-					Ref:          ptr(uuid.MustParse(testdata.FakeUUID)),
-					FindByString: ptr("Київ"),
-					Limit:        ptr(10),
-					Page:         ptr(1),
+		"GetCitiesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetCities(GetCitiesReq{
+					Ref:          utils.PTR(uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db")),
+					FindByString: utils.PTR("Київ"),
+					Limit:        utils.PTR(10),
+					Page:         utils.PTR(1),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetCitiesResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetCitiesRes{{
 					Description:                 "Київ",
 					DescriptionRu:               "Киев",
 					Ref:                         uuid.MustParse("8d5a980d-391c-11dd-90d9-001a92567626"),
@@ -290,24 +257,21 @@ func TestApi(t *testing.T) {
 					Area:                        uuid.MustParse("71508131-9b87-11de-822f-000c2965ae0e"),
 					SettlementType:              uuid.MustParse("563ced10-f210-11e3-8c4a-0050568002cf"),
 					IsBranch:                    true,
-					CityID:                      "4",
+					CityID:                      4,
 					SettlementTypeDescription:   "місто",
 					SettlementTypeDescriptionRu: "город",
-					SpecialCashCheck:            1,
+					SpecialCashCheck:            true,
 					AreaDescription:             "Київська",
 					AreaDescriptionRu:           "Киевская",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetAreasDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetAreas()
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetAreasResult{{
+		"GetAreasDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetAreas()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetAreasRes{{
 					Ref:           uuid.MustParse("71508128-9b87-11de-822f-000c2965ae0e"),
 					AreasCenter:   uuid.MustParse("db5c88b7-391c-11dd-90d9-001a92567626"),
 					DescriptionRu: "АРК",
@@ -318,26 +282,23 @@ func TestApi(t *testing.T) {
 					DescriptionRu: "Винницкая",
 					Description:   "Вінницька",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetWarehousesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetWarehouses(GetWarehousesFilter{
-					CityName:           ptr("Київ"),
-					CityRef:            ptr(uuid.MustParse(testdata.FakeUUID)),
-					TypeOfWarehouseRef: ptr(uuid.MustParse(testdata.FakeUUID)),
-					Language:           ptr(enum.LanguageUA),
-					WarehouseId:        ptr(types.IntString(151)),
-					Limit:              ptr(50),
-					Page:               ptr(1),
+		"GetWarehousesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetWarehouses(GetWarehousesReq{
+					CityName:           utils.PTR("Київ"),
+					CityRef:            utils.PTR(uuid.MustParse("71508129-9b87-11de-822f-000c2965ae0e")),
+					TypeOfWarehouseRef: utils.PTR(uuid.MustParse("db5c88de-391c-11dd-90d9-001a92567626")),
+					Language:           utils.PTR(enum.LanguageUA),
+					WarehouseId:        utils.PTR(types.IntString(151)),
+					Limit:              utils.PTR(50),
+					Page:               utils.PTR(1),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetWarehousesResult{{
-					SiteKey:                     "105",
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetWarehousesRes{{
+					SiteKey:                     105,
 					Description:                 "Відділення №1: вул. Пирогівський шлях, 135",
 					DescriptionRu:               "Отделение №1: ул. Пироговский путь, 135",
 					ShortAddress:                "Київ, Пирогівський шлях, 135",
@@ -361,7 +322,7 @@ func TestApi(t *testing.T) {
 					PaymentAccess:               true,
 					POSTerminal:                 true,
 					InternationalShipping:       true,
-					SelfServiceWorkplacesCount:  types.IntString(1),
+					SelfServiceWorkplacesCount:  true,
 					PlaceMaxWeightAllowed:       types.IntString(1100),
 					SendingLimitationsOnDimensions: Dimensions{
 						Width:  170,
@@ -402,24 +363,21 @@ func TestApi(t *testing.T) {
 					},
 					DistrictCode:        "в1",
 					WarehouseStatus:     "Working",
-					WarehouseStatusDate: "2022-03-22 00:00:00",
+					WarehouseStatusDate: types.MustParseDateTime("2022-03-22 00:00:00"),
 					CategoryOfWarehouse: "Branch",
 					RegionCity:          "КИЇВ ЗАХІД ПОСИЛКОВИЙ",
 					GeneratorEnabled:    true,
 					CanGetMoneyTransfer: true,
 					WarehouseIndex:      "11/1",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetWarehouseTypesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetWarehouseTypes()
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetWarehouseTypesResult{{
+		"GetWarehouseTypesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetWarehouseTypes()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetWarehouseTypesRes{{
 					Ref:           uuid.MustParse("6f8c7162-4b72-4b0a-88e5-906948c6a92f"),
 					Description:   "Parcel Shop",
 					DescriptionRu: "Parcel Shop",
@@ -428,22 +386,19 @@ func TestApi(t *testing.T) {
 					Description:   "Поштове відділення",
 					DescriptionRu: "Почтовое отделение",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetStreetDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).GetStreet(GetStreetFilter{
-					CityRef:      uuid.MustParse(testdata.FakeUUID),
-					FindByString: ptr("Київ"),
-					Limit:        ptr(50),
-					Page:         ptr(1),
+		"GetStreetDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetStreet(GetStreetReq{
+					CityRef:      uuid.MustParse("ef905acd-e1f4-11e5-899e-005056887b8d"),
+					FindByString: utils.PTR("Київ"),
+					Limit:        utils.PTR(50),
+					Page:         utils.PTR(1),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetStreetResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetStreetRes{{
 					Ref:            uuid.MustParse("ef905acd-e1f4-11e5-899e-005056887b8d"),
 					Description:    "1-а Вишнева",
 					StreetsTypeRef: "Street",
@@ -454,74 +409,29 @@ func TestApi(t *testing.T) {
 					StreetsTypeRef: "Street",
 					StreetsType:    "вул.",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetStreetError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SearchSettlementStreets(SearchSettlementStreetsFilter{
+		"GetStreetError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SearchSettlementStreets(SearchSettlementStreetsReq{
 					StreetName:    "Хрещатик",
-					SettlementRef: uuid.MustParse(testdata.FakeUUID),
-					Limit:         ptr(10),
+					SettlementRef: uuid.MustParse("ef905acd-e1f4-11e5-899e-005056887b8d"),
+					Limit:         utils.PTR(10),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("CityRef is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("CityRef is not specified")),
 		},
 	}
 
-	for _, tc := range testCases {
-		stubFileName := fmt.Sprintf("%s.%s", tc.name, tc.format)
+	for name, tc := range testCases {
+		testDataPath, err := filepath.Abs("./testdata")
 
-		mockBasePath := "./testdata"
-		reqPath := fmt.Sprintf("%s/request/%s", mockBasePath, stubFileName)
-
-		var reqBody []byte
-		if _, err := os.Stat(reqPath); err == nil {
-			reqBody, err = os.ReadFile(reqPath)
-			require.NoError(t, err)
-		}
-
-		resPath := fmt.Sprintf("%s/response/%s", mockBasePath, stubFileName)
-
-		var resBody []byte
-		_, err := os.Stat(resPath)
-		require.NoError(t, err)
-		resBody, err = os.ReadFile(resPath)
 		require.NoError(t, err)
 
-		testCase := testdata.ApiTestCase{
-			Name:           tc.name,
-			ReqBody:        reqBody,
-			ReqCallback:    tc.reqCallback,
-			ResBody:        resBody,
-			ResCallback:    tc.resCallback,
-			ExpectErr:      tc.expectErr,
-			HttpStatusCode: http.StatusOK,
-		}
+		tc = append(tc, testdata.WithTestDataPath[Model](testDataPath))
 
-		c := NewApi(adapter.NewAdapter(adapter.CreateConfig(
-			testdata.FakeApiKey,
-			adapter.WithHTTPClient(testdata.CreateFakeHTTPClient(t, testCase)),
-			adapter.WithFormat(adapter.FormatJSON),
-		)))
-
-		testdata.RunApiTestCase(t, testCase, c)
+		tc.Run(t, name, func(adp adapter.RequestAdapter) Model {
+			return NewModel(adp)
+		})
 	}
-}
-
-type apiTestCase struct {
-	name   string
-	format testdata.Format
-
-	reqCallback func(c any) (any, error)
-	resCallback func(res any)
-
-	expectErr error
-}
-
-func ptr[T any](v T) *T {
-	return &v
 }

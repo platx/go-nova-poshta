@@ -1,50 +1,29 @@
 package types
 
 import (
-	"encoding/json"
-	"encoding/xml"
+	"errors"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
-func TestIntString(t *testing.T) {
-	t.Run("JSON", func(t *testing.T) {
-		encoded := []byte(`{"Value":"111"}`)
-
-		var decoded testIntStringStruct
-
-		require.NoError(t, json.Unmarshal(encoded, &decoded))
-
-		require.Equal(t, IntString(111), decoded.Value)
-
-		var err error
-
-		encoded, err = json.Marshal(decoded)
-
-		require.NoError(t, err)
-
-		require.Equal(t, []byte(`{"Value":"111"}`), encoded)
-	})
-	t.Run("XML", func(t *testing.T) {
-		encoded := []byte(`<testIntStringStruct><Value>111</Value></testIntStringStruct>`)
-
-		var decoded testIntStringStruct
-
-		require.NoError(t, xml.Unmarshal(encoded, &decoded))
-
-		require.Equal(t, IntString(111), decoded.Value)
-
-		var err error
-
-		encoded, err = xml.Marshal(decoded)
-
-		require.NoError(t, err)
-
-		require.Equal(t, []byte(`<testIntStringStruct><Value>111</Value></testIntStringStruct>`), encoded)
-	})
-}
-
-type testIntStringStruct struct {
-	Value IntString `json:"Value" xml:"Value"`
+func TestFloatString(t *testing.T) {
+	testCase[FloatString]{
+		name:     "Empty",
+		given:    "",
+		expected: 0.0,
+	}.run(t)
+	testCase[FloatString]{
+		name:     "NotEmpty",
+		given:    "111.222",
+		expected: 111.222,
+	}.run(t)
+	testCase[FloatString]{
+		name:  "Invalid",
+		given: "ddd",
+		err:   errors.New("invalid float string 'ddd'"),
+	}.run(t)
+	testCase[FloatString]{
+		name:     "Empty",
+		given:    "",
+		expected: 0,
+	}.run(t)
 }

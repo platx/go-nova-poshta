@@ -1,8 +1,8 @@
 {
   "apiKey": "fake-token",
   "modelName": "AdditionalService",
-  "calledMethod": "checkPossibilityForRedirecting",
+  "calledMethod": "CheckPossibilityChangeEW",
   "methodProperties": {
-    "Number": "20450520287825"
+    "IntDocNumber": "20450500000012"
   }
 }

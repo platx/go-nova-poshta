@@ -2,6 +2,7 @@ package trackingdocument
 
 import (
 	"encoding/xml"
+
 	"github.com/platx/go-nova-poshta/custom/types"
 )
 
@@ -19,10 +20,10 @@ func (v *TrackingDocumentStatus) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v *TrackingDocumentStatus) UnmarshalXMLAttr(attr xml.Attr) error {
+func (v *TrackingDocumentStatus) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var bv types.IntString
 
-	if err := bv.UnmarshalXMLAttr(attr); err != nil {
+	if err := bv.UnmarshalXML(d, start); err != nil {
 		return err
 	}
 
@@ -31,19 +32,18 @@ func (v *TrackingDocumentStatus) UnmarshalXMLAttr(attr xml.Attr) error {
 	return nil
 }
 
-func (v *TrackingDocumentStatus) MarshalJSON() ([]byte, error) {
-	bv := types.IntString(*v)
+func (v TrackingDocumentStatus) MarshalJSON() ([]byte, error) {
+	bv := types.IntString(v)
 
 	return bv.MarshalJSON()
 }
 
-func (v *TrackingDocumentStatus) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
-	bv := types.IntString(*v)
+func (v TrackingDocumentStatus) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	bv := types.IntString(v)
 
-	return bv.MarshalXMLAttr(name)
+	return bv.MarshalXML(e, start)
 }
 
-// TODO: fix constant names
 const (
 	TrackingDocumentStatusCreatedBySender                  TrackingDocumentStatus = 1
 	TrackingDocumentStatusRemoved                          TrackingDocumentStatus = 2

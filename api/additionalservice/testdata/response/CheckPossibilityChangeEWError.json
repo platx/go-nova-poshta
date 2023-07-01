@@ -2,13 +2,13 @@
   "success": false,
   "data": [],
   "errors": [
-    "Express Waybill document not found"
+    "IntDocNumber is incorrect"
   ],
   "warnings": [],
   "info": [],
   "messageCodes": [],
   "errorCodes": [
-    "20000301849"
+    "20000301271"
   ],
   "warningCodes": [],
   "infoCodes": []

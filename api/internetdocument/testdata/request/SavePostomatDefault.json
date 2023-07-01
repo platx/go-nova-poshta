@@ -24,6 +24,15 @@
     "Recipient": "00240bfc-44ba-48fa-b21a-116bec10a30e",
     "RecipientAddress": "ba81a755-6759-4673-8ddf-81bf9c4f7523",
     "ContactRecipient": "cdf3a4ad-5f06-46cf-b141-72ff395b9fc1",
-    "RecipientsPhone": "380660000001"
+    "RecipientsPhone": "380660000001",
+    "OptionsSeat": [
+      {
+        "volumetricVolume": 11,
+        "volumetricWidth": 21,
+        "volumetricLength": 22,
+        "volumetricHeight": 23,
+        "weight": 31
+      }
+    ]
   }
 }

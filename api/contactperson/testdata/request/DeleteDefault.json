@@ -1,1 +1,8 @@
-{"apiKey":"fake-token","modelName":"ContactPerson","calledMethod":"delete","methodProperties":{"Ref":"00000000-0000-0000-0000-000000000000"}}
+{
+  "apiKey": "fake-token",
+  "modelName": "ContactPerson",
+  "calledMethod": "delete",
+  "methodProperties": {
+    "Ref": "031a466a-de28-11ed-a60f-48df37b921db"
+  }
+}

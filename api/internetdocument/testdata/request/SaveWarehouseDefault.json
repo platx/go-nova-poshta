@@ -25,14 +25,18 @@
     "RecipientAddress": "ba81a755-6759-4673-8ddf-81bf9c4f7523",
     "ContactRecipient": "cdf3a4ad-5f06-46cf-b141-72ff395b9fc1",
     "RecipientsPhone": "380660000001",
-    "OptionsSeat": [
-      {
-        "volumetricVolume": 11,
-        "volumetricWidth": 21,
-        "volumetricLength": 22,
-        "volumetricHeight": 23,
-        "weight": 31
-      }
-    ]
+    "NewAddress": "1",
+    "RecipientCityName": "Київ",
+    "RecipientArea": "f354fa80-376c-412d-a55e-60df79869f0c",
+    "RecipientAreaRegions": "65d7cc3b-d8f2-4a6b-9857-01d71ea910dd",
+    "RecipientAddressName": "3d9d88d2-91a5-4857-9403-9f310cc4da61",
+    "RecipientHouse": "11",
+    "RecipientFlat": "2",
+    "RecipientName": "Іванов Іван Іванович",
+    "RecipientType": "PrivatePerson",
+    "SettlementType": "місто",
+    "OwnershipForm": "b35699f0-0081-45f8-99fa-7fa666ed2ff4",
+    "RecipientContactName": "Іванов Іван Іванович",
+    "EDRPOU": "12345678"
   }
 }

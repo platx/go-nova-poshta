@@ -1,17 +1,12 @@
 {
-  "success": true,
+  "success": false,
   "data": [
     {
       "Ref": "",
       "Number": "",
       "Date": "",
       "Description": "",
-      "Errors": [
-        {
-          "Error": "Реєстр не знайдений",
-          "Number": "00000000-0000-0000-0000-000000000000"
-        }
-      ],
+      "Errors": [],
       "Success": [],
       "Warnings": [],
       "Data": {
@@ -21,11 +16,15 @@
       }
     }
   ],
-  "errors": [],
+  "errors": [
+    "Реєстр не знайдений"
+  ],
   "warnings": [],
   "info": [],
   "messageCodes": [],
-  "errorCodes": [],
+  "errorCodes": [
+    "ERR_0001"
+  ],
   "warningCodes": [],
   "infoCodes": []
 }

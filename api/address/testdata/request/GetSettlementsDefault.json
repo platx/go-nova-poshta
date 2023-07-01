@@ -1,1 +1,14 @@
-{"apiKey":"fake-token","modelName":"Address","calledMethod":"getSettlements","methodProperties":{"AreaRef":"00000000-0000-0000-0000-000000000000","Ref":"00000000-0000-0000-0000-000000000000","RegionRef":"00000000-0000-0000-0000-000000000000","Warehouse":true,"FindByString":"Київ","Limit":10,"Page":1}}
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "getSettlements",
+  "methodProperties": {
+    "AreaRef": "478567ce-2a7f-4ebb-b673-8361b6974571",
+    "Ref": "34a6bbc1-249d-4453-8d61-5c1c1dc52924",
+    "RegionRef": "11177059-be78-49ea-bf19-64114b1e04ba",
+    "Warehouse": true,
+    "FindByString": "Київ",
+    "Limit": 10,
+    "Page": 1
+  }
+}

@@ -7,46 +7,52 @@ import (
 
 type BoolString bool
 
+func (v BoolString) String() string {
+	if v {
+		return "1"
+	}
+
+	return "0"
+}
+
 func (v *BoolString) UnmarshalJSON(data []byte) error {
 	s := trimQuotes(string(data))
 
 	switch s {
-	case "true", "1":
+	case "1":
 		*v = true
-	case "false", "0":
+	case "0":
 		*v = false
 	default:
-		return fmt.Errorf("invalid boolean string: %s", s)
+		return fmt.Errorf("invalid boolean string '%s'", s)
 	}
 
 	return nil
 }
 
-func (v *BoolString) UnmarshalXMLAttr(attr xml.Attr) error {
-	switch attr.Value {
-	case "true", "1":
+func (v *BoolString) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	s := ""
+
+	if err := d.DecodeElement(&s, &start); err != nil {
+		return err
+	}
+
+	switch s {
+	case "1":
 		*v = true
-	case "false", "0":
+	case "0":
 		*v = false
 	default:
-		return fmt.Errorf("invalid boolean string: %s", attr.Value)
+		return fmt.Errorf("invalid boolean string '%s'", s)
 	}
 
 	return nil
 }
 
-func (v *BoolString) MarshalJSON() ([]byte, error) {
-	if *v {
-		return []byte("\"1\""), nil
-	}
-
-	return []byte("\"0\""), nil
+func (v BoolString) MarshalJSON() ([]byte, error) {
+	return []byte(fmt.Sprintf("\"%s\"", v.String())), nil
 }
 
-func (v *BoolString) MarshalXMLAttr(name xml.Name) (xml.Attr, error) {
-	if *v {
-		return xml.Attr{Name: name, Value: "1"}, nil
-	}
-
-	return xml.Attr{Name: name, Value: "0"}, nil
+func (v BoolString) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(v.String(), start)
 }

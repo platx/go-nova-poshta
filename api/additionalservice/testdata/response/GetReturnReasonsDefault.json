@@ -1,13 +1,8 @@
 {
   "success": true,
   "data": [{
-    "NonCash" : true,
-    "City" : "Київ",
-    "Counterparty" : "ТОВ Яблуневий сад",
-    "ContactPerson" : "Іванов Іван Іванович",
-    "Address" : "м. Київ,  вул. Хрещатик, буд. 1",
-    "Phone" : "380950000000",
-    "Ref" : "00000000-0000-0000-0000-000000000000"
+    "Ref" : "411ceab2-b5e1-4433-ad52-a2ea22be56e6",
+    "Description" : "Відмова Одержувача"
   }],
   "errors": [],
   "warnings": [],

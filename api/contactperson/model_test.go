@@ -2,40 +2,38 @@ package contactperson
 
 import (
 	"errors"
-	"fmt"
+	"path/filepath"
+	"testing"
+
 	"github.com/google/uuid"
-	"github.com/platx/go-nova-poshta/adapter"
-	"github.com/platx/go-nova-poshta/custom/types"
-	"github.com/platx/go-nova-poshta/testdata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"net/http"
-	"os"
-	"testing"
+
+	"github.com/platx/go-nova-poshta/adapter"
+	"github.com/platx/go-nova-poshta/testdata"
+	"github.com/platx/go-nova-poshta/utils"
 )
 
-func TestApi(t *testing.T) {
+func TestModel(t *testing.T) {
 	t.Parallel()
 
-	testCases := []apiTestCase{
-		{
-			name:   "SaveDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Save(CreateData{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
+	testCases := map[string]testdata.ApiTestParams[Model]{
+		"SaveDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Save(CreateReq{
+					CounterpartyRef: uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 					FirstName:       "Иван",
 					LastName:        "Иванов",
-					MiddleName:      "Иванович",
+					MiddleName:      utils.PTR("Иванович"),
 					Phone:           "380997979781",
 				})
-			},
-			resCallback: func(res any) {
-				typedRes := res.(SaveResult)
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(SaveRes)
 
 				assert.Len(t, typedRes, 1)
 
-				assert.Equal(t, ExistContactPerson{
+				assert.Equal(t, ContactPerson{
 					Ref:         uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 					Description: "Иванов Иван Иванович",
 					LastName:    "Иванов",
@@ -43,151 +41,95 @@ func TestApi(t *testing.T) {
 					MiddleName:  "Иванович",
 					Phones:      "380997979781",
 				}, typedRes[0])
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SaveError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Save(CreateData{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
+		"SaveError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Save(CreateReq{
+					CounterpartyRef: uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 					FirstName:       "Иван",
 					LastName:        "Иванов",
-					MiddleName:      "Иванович",
+					MiddleName:      utils.PTR("Иванович"),
 					Phone:           "380997979781",
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("ContactPerson already exist for Sender"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("ContactPerson already exist for Sender")),
 		},
-		{
-			name:   "UpdateDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Update(UpdateData{
-					Ref:             uuid.MustParse(testdata.FakeUUID),
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
+		"UpdateDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Update(UpdateReq{
+					Ref:             uuid.MustParse("6fa8b18e-b238-451d-be30-15e9173d67a3"),
+					CounterpartyRef: uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 					FirstName:       "Иван",
 					LastName:        "Иванов",
-					MiddleName:      "Иванович",
+					MiddleName:      utils.PTR("Иванович"),
 					Phone:           "380997979781",
 				})
-			},
-			resCallback: func(res any) {
-				typedRes := res.(SaveResult)
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(SaveRes)
 
 				assert.Len(t, typedRes, 1)
 
-				assert.Equal(t, ExistContactPerson{
-					Ref:         uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
-					Description: "Иванов Иван Иванович",
-					LastName:    "Иванов",
-					FirstName:   "Иван",
-					MiddleName:  "Иванович",
-					Phones:      "380997979781",
-					Email:       ptr(types.Email("test@i.com")),
+				assert.Equal(t, ContactPerson{
+					Ref:             uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
+					Description:     "Иванов Иван Иванович",
+					LastName:        "Иванов",
+					FirstName:       "Иван",
+					MiddleName:      "Иванович",
+					Phones:          "380997979781",
+					AdditionalPhone: utils.PTR(string("")),
+					Email:           utils.PTR(string("test@i.com")),
 				}, typedRes[0])
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "UpdateError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Update(UpdateData{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
+		"UpdateError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Update(UpdateReq{
+					CounterpartyRef: uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 					FirstName:       "Иван",
 					LastName:        "Иванов",
-					MiddleName:      "Иванович",
+					MiddleName:      utils.PTR("Иванович"),
 					Phone:           "380997979781",
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("Edit disabled for PrivatePerson Sender"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("Edit disabled for PrivatePerson Sender")),
 		},
-		{
-			name:   "DeleteDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Delete(DeleteData{
-					Ref: uuid.MustParse(testdata.FakeUUID),
+		"DeleteDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 				})
-			},
-			resCallback: func(res any) {
-				typedRes := res.(DeleteResult)
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				typedRes := res.(DeleteRes)
 
 				assert.Len(t, typedRes, 1)
 
-				assert.Equal(t, DeleteData{
+				assert.Equal(t, DeleteReq{
 					Ref: uuid.MustParse("fb6dcee6-de27-11ed-a60f-48df37b921db"),
 				}, typedRes[0])
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "DeleteError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Delete(DeleteData{
-					Ref: uuid.MustParse(testdata.FakeUUID),
+		"DeleteError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: uuid.MustParse("031a466a-de28-11ed-a60f-48df37b921db"),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("Ref is incorrect"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("Ref is incorrect")),
 		},
 	}
 
-	for _, tc := range testCases {
-		stubFileName := fmt.Sprintf("%s.%s", tc.name, tc.format)
+	for name, tc := range testCases {
+		testDataPath, err := filepath.Abs("./testdata")
 
-		mockBasePath := "./testdata"
-		reqPath := fmt.Sprintf("%s/request/%s", mockBasePath, stubFileName)
-
-		var reqBody []byte
-		if _, err := os.Stat(reqPath); err == nil {
-			reqBody, err = os.ReadFile(reqPath)
-			require.NoError(t, err)
-		}
-
-		resPath := fmt.Sprintf("%s/response/%s", mockBasePath, stubFileName)
-
-		var resBody []byte
-		_, err := os.Stat(resPath)
-		require.NoError(t, err)
-		resBody, err = os.ReadFile(resPath)
 		require.NoError(t, err)
 
-		testCase := testdata.ApiTestCase{
-			Name:           tc.name,
-			ReqBody:        reqBody,
-			ReqCallback:    tc.reqCallback,
-			ResBody:        resBody,
-			ResCallback:    tc.resCallback,
-			ExpectErr:      tc.expectErr,
-			HttpStatusCode: http.StatusOK,
-		}
+		tc = append(tc, testdata.WithTestDataPath[Model](testDataPath))
 
-		c := NewApi(adapter.NewAdapter(adapter.CreateConfig(
-			testdata.FakeApiKey,
-			adapter.WithHTTPClient(testdata.CreateFakeHTTPClient(t, testCase)),
-			adapter.WithFormat(adapter.FormatJSON),
-		)))
-
-		testdata.RunApiTestCase(t, testCase, c)
+		tc.Run(t, name, func(adp adapter.RequestAdapter) Model {
+			return NewModel(adp)
+		})
 	}
-}
-
-type apiTestCase struct {
-	name   string
-	format testdata.Format
-
-	reqCallback func(c any) (any, error)
-	resCallback func(res any)
-
-	expectErr error
-}
-
-func ptr[T any](v T) *T {
-	return &v
 }

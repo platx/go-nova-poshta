@@ -1,6 +1,8 @@
 {
   "apiKey": "fake-token",
   "modelName": "AdditionalService",
-  "calledMethod": "getReturnReasons",
-  "methodProperties": {}
+  "calledMethod": "getReturnReasonsSubtypes",
+  "methodProperties": {
+    "ReasonRef": "72226bae-1007-4421-89fa-7e2583862411"
+  }
 }

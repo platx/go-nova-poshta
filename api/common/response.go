@@ -2,23 +2,24 @@ package common
 
 import (
 	"github.com/google/uuid"
+
 	"github.com/platx/go-nova-poshta/custom/types"
 )
 
-type ListItem struct {
-	Ref         string `json:"Ref" xml:"Ref"`
+type ListItem[V any] struct {
+	Ref         V      `json:"Ref" xml:"Ref"`
 	Description string `json:"Description" xml:"Description"`
 }
 
-type ListItemsResult []ListItem
+type ListItemsRes[V any] []ListItem[V]
 
 type TimeInterval struct {
 	Number string `json:"Number" xml:"Number"`
-	Start  string `json:"Start" xml:"Start"` // TODO: add custom type
-	End    string `json:"End" xml:"End"`     // TODO: add custom type
+	Start  string `json:"Start" xml:"Start"`
+	End    string `json:"End" xml:"End"`
 }
 
-type GetTimeIntervalsResult []TimeInterval
+type GetTimeIntervalsRes []TimeInterval
 
 type Pallet struct {
 	Ref           uuid.UUID         `json:"Ref" xml:"Ref"`
@@ -27,7 +28,7 @@ type Pallet struct {
 	Weight        types.FloatString `json:"Weight" xml:"Weight"`
 }
 
-type GetPalletsListResult []Pallet
+type GetPalletsListRes []Pallet
 
 type Pack struct {
 	Ref               uuid.UUID         `json:"Ref" xml:"Ref"`
@@ -37,11 +38,11 @@ type Pack struct {
 	Width             types.FloatString `json:"Width" xml:"Width"`
 	Height            types.FloatString `json:"Height" xml:"Height"`
 	VolumetricWeight  types.FloatString `json:"VolumetricWeight" xml:"VolumetricWeight"`
-	TypeOfPacking     string            `json:"TypeOfPacking" xml:"TypeOfPacking"` // TODO: always empty string, is it needed?
-	PackagingForPlace types.BoolString  `json:"PackagingForPlace" xml:"PackagingForPlace"`
+	TypeOfPacking     string            `json:"TypeOfPacking" xml:"TypeOfPacking"`
+	PackagingForPlace types.IntString   `json:"PackagingForPlace" xml:"PackagingForPlace"`
 }
 
-type GetPackListResult []Pack
+type GetPackListRes []Pack
 
 type TiresWheels struct {
 	Ref             uuid.UUID         `json:"Ref" xml:"Ref"`
@@ -51,7 +52,7 @@ type TiresWheels struct {
 	DescriptionType TiresWheelsType   `json:"DescriptionType" xml:"DescriptionType"`
 }
 
-type GetTiresWheelsListResult []TiresWheels
+type GetTiresWheelsListRes []TiresWheels
 
 type CargoDescription struct {
 	Ref           uuid.UUID `json:"Ref" xml:"Ref"`
@@ -59,16 +60,16 @@ type CargoDescription struct {
 	DescriptionRu string    `json:"DescriptionRu" xml:"DescriptionRu"`
 }
 
-type GetCargoDescriptionListResult []CargoDescription
+type GetCargoDescriptionListRes []CargoDescription
 
 type MessageCodeTextItem struct {
-	MessageCode          string `json:"MessageCode" xml:"MessageCode"` // TODO: is it int string?
+	MessageCode          string `json:"MessageCode" xml:"MessageCode"`
 	MessageText          string `json:"MessageText" xml:"MessageText"`
 	MessageDescriptionRU string `json:"MessageDescriptionRU" xml:"MessageDescriptionRU"`
 	MessageDescriptionUA string `json:"MessageDescriptionUA" xml:"MessageDescriptionUA"`
 }
 
-type GetMessageCodeTextResult []MessageCodeTextItem
+type GetMessageCodeTextRes []MessageCodeTextItem
 
 type OwnershipForm struct {
 	Ref         uuid.UUID `json:"Ref" xml:"Ref"`
@@ -76,4 +77,4 @@ type OwnershipForm struct {
 	FullName    string    `json:"FullName" xml:"FullName"`
 }
 
-type GetOwnershipFormsListResult []OwnershipForm
+type GetOwnershipFormsListRes []OwnershipForm

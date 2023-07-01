@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "19710832-3af1-11eb-8513-b88303659df5",
+      "Description": "Приватна особа",
+      "FirstName": "Іван",
+      "MiddleName": "Іванович",
+      "LastName": "Іванов",
+      "Counterparty": "",
+      "OwnershipForm": "",
+      "OwnershipFormDescription": "",
+      "EDRPOU": "",
+      "CounterpartyType": "PrivatePerson"
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "You can't change PrivatePerson counterparty"
+  ],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [
+    "30000902062"
+  ],
+  "infoCodes": []
+}

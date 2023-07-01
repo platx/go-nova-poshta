@@ -2,7 +2,7 @@
   "success": false,
   "data": [],
   "errors": [
-    "IntDocNumber is incorrect"
+    "Ref not found"
   ],
   "warnings": [],
   "info": [],

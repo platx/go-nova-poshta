@@ -1,29 +1,24 @@
 package trackingdocument
 
-const modelName = "TrackingDocument"
+import "github.com/platx/go-nova-poshta/api"
 
-type client interface {
-	Call(model string, method string, props any, res any) error
+type Model interface {
+	api.Model
+
+	// GetStatusDocuments https://developers.novaposhta.ua/view/model/a99d2f28-8512-11ec-8ced-005056b2dbe1/method/a9ae7bc9-8512-11ec-8ced-005056b2dbe1
+	GetStatusDocuments(GetStatusDocumentsReq) (GetStatusDocumentsRes, error)
 }
 
-type Api interface {
-	GetStatusDocuments(GetStatusDocumentsFilter) (GetStatusDocumentsResult, error)
+type model struct {
+	api.Model
 }
 
-type api struct {
-	client
+func NewModel(client api.Client) Model {
+	return &model{api.NewModel(client, "TrackingDocument")}
 }
 
-func NewApi(client client) Api {
-	return &api{client: client}
-}
+func (m *model) GetStatusDocuments(req GetStatusDocumentsReq) (GetStatusDocumentsRes, error) {
+	var res GetStatusDocumentsRes
 
-func (c *api) call(method string, props any, res any) error {
-	return c.Call(modelName, method, props, res)
-}
-
-func (c *api) GetStatusDocuments(props GetStatusDocumentsFilter) (GetStatusDocumentsResult, error) {
-	var res GetStatusDocumentsResult
-
-	return res, c.call("getStatusDocuments", props, &res)
+	return res, m.Call("getStatusDocuments", req, &res)
 }

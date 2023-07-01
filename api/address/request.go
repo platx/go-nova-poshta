@@ -2,44 +2,45 @@ package address
 
 import (
 	"github.com/google/uuid"
+
 	"github.com/platx/go-nova-poshta/custom/enum"
 	"github.com/platx/go-nova-poshta/custom/types"
 )
 
-type SearchSettlementsFilter struct {
+type SearchSettlementsReq struct {
 	CityName string `json:"CityName" xml:"CityName"`
 	Limit    *int   `json:"Limit" xml:"Limit"`
 	Page     *int   `json:"Page" xml:"Page"`
 }
 
-type SearchSettlementStreetsFilter struct {
+type SearchSettlementStreetsReq struct {
 	StreetName    string    `json:"StreetName" xml:"StreetName"`
 	SettlementRef uuid.UUID `json:"SettlementRef" xml:"SettlementRef"`
 	Limit         *int      `json:"Limit" xml:"Limit"`
 }
 
-type CreateData struct {
+type CreateReq struct {
 	CounterpartyRef uuid.UUID `json:"CounterpartyRef" xml:"CounterpartyRef"`
 	StreetRef       uuid.UUID `json:"StreetRef" xml:"StreetRef"`
 	BuildingNumber  string    `json:"BuildingNumber" xml:"BuildingNumber"`
-	Flat            string    `json:"Flat" xml:"Flat"`
+	Flat            *string   `json:"Flat" xml:"Flat"`
 	Note            *string   `json:"Note" xml:"Note"`
 }
 
-type UpdateData struct {
+type UpdateReq struct {
 	Ref             uuid.UUID `json:"Ref" xml:"Ref"`
 	CounterpartyRef uuid.UUID `json:"CounterpartyRef" xml:"CounterpartyRef"`
 	StreetRef       uuid.UUID `json:"StreetRef" xml:"StreetRef"`
 	BuildingNumber  string    `json:"BuildingNumber" xml:"BuildingNumber"`
-	Flat            string    `json:"Flat" xml:"Flat"`
+	Flat            *string   `json:"Flat" xml:"Flat"`
 	Note            *string   `json:"Note" xml:"Note"`
 }
 
-type DeleteData struct {
+type DeleteReq struct {
 	Ref uuid.UUID `json:"Ref" xml:"Ref"`
 }
 
-type GetSettlementsFilter struct {
+type GetSettlementsReq struct {
 	AreaRef      *uuid.UUID `json:"AreaRef" xml:"AreaRef"`
 	Ref          *uuid.UUID `json:"Ref" xml:"Ref"`
 	RegionRef    *uuid.UUID `json:"RegionRef" xml:"RegionRef"`
@@ -49,14 +50,14 @@ type GetSettlementsFilter struct {
 	Page         *int       `json:"Page" xml:"Page"`
 }
 
-type GetCitiesFilter struct {
+type GetCitiesReq struct {
 	Ref          *uuid.UUID `json:"Ref" xml:"Ref"`
 	FindByString *string    `json:"FindByString" xml:"FindByString"`
 	Limit        *int       `json:"Limit" xml:"Limit"`
 	Page         *int       `json:"Page" xml:"Page"`
 }
 
-type GetWarehousesFilter struct {
+type GetWarehousesReq struct {
 	CityName           *string          `json:"CityName"`
 	CityRef            *uuid.UUID       `json:"CityRef"`
 	TypeOfWarehouseRef *uuid.UUID       `json:"TypeOfWarehouseRef"`
@@ -66,7 +67,7 @@ type GetWarehousesFilter struct {
 	Page               *int             `json:"Page"`
 }
 
-type GetStreetFilter struct {
+type GetStreetReq struct {
 	CityRef      uuid.UUID `json:"CityRef" xml:"CityRef"`
 	FindByString *string   `json:"FindByString" xml:"FindByString"`
 	Limit        *int      `json:"Limit" xml:"Limit"`

@@ -1,1 +1,6 @@
-{"apiKey":"fake-token","modelName":"Address","calledMethod":"getWarehouseTypes","methodProperties":{}}
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "getWarehouseTypes",
+  "methodProperties": {}
+}

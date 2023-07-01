@@ -1,14 +1,9 @@
 {
   "success": true,
   "data": [{
-    "AssessedCost": "300",
-    "Cost": "45",
-    "CostRedelivery": "100",
-    "TZoneInfo": {
-      "TzoneName": "Тарифназона:Тарифназона4",
-      "TzoneID": "4"
-    },
-    "CostPack": "4"
+    "date": "2019.01.02 12:13:14",
+    "timezone_type": "3",
+    "timezone": "Europe/Kiev"
   }],
   "errors": [],
   "warnings": [],

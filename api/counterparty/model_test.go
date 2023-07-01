@@ -2,29 +2,28 @@ package counterparty
 
 import (
 	"errors"
-	"fmt"
+	"path/filepath"
+	"testing"
+
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/platx/go-nova-poshta/adapter"
 	"github.com/platx/go-nova-poshta/custom/enum"
 	"github.com/platx/go-nova-poshta/custom/types"
 	"github.com/platx/go-nova-poshta/testdata"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"net/http"
-	"os"
-	"testing"
+	"github.com/platx/go-nova-poshta/utils"
 )
 
 func TestApi(t *testing.T) {
 	t.Parallel()
 
-	testCases := []apiTestCase{
-		{
-			name:   "SavePrivatePersonDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SavePrivatePerson(CreateDataPrivatePerson{
-					CreateData: CreateData{
+	testCases := map[string]testdata.ApiTestParams[Model]{
+		"SavePrivatePersonDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SavePrivatePerson(SavePrivatePersonReq{
+					SaveReq: SaveReq{
 						CounterpartyType:     enum.CounterpartyTypePrivatePerson,
 						CounterpartyProperty: enum.CounterpartyPropertyRecipient,
 					},
@@ -34,9 +33,9 @@ func TestApi(t *testing.T) {
 					Phone:      "380997979789",
 					Email:      "test@i.com",
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SaveResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
 					Ref:              uuid.MustParse("19710832-3af1-11eb-8513-b88303659df5"),
 					Description:      "Приватна особа",
 					FirstName:        "Іван",
@@ -44,15 +43,12 @@ func TestApi(t *testing.T) {
 					LastName:         "Іванов",
 					CounterpartyType: enum.CounterpartyTypePrivatePerson,
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SavePrivatePersonError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).SavePrivatePerson(CreateDataPrivatePerson{
-					CreateData: CreateData{
+		"SavePrivatePersonError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SavePrivatePerson(SavePrivatePersonReq{
+					SaveReq: SaveReq{
 						CounterpartyType:     enum.CounterpartyTypePrivatePerson,
 						CounterpartyProperty: enum.CounterpartyPropertyRecipient,
 					},
@@ -61,28 +57,101 @@ func TestApi(t *testing.T) {
 					Phone:      "380997979789",
 					Email:      "test@i.com",
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("FirstName is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("FirstName is not specified")),
 		},
-		{
-			name:   "UpdateDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Update(UpdateData{
-					Ref:                  uuid.MustParse(testdata.FakeUUID),
-					CityRef:              uuid.MustParse(testdata.FakeUUID),
+		"SaveThirdPersonDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveThirdPerson(SaveThirdPersonReq{
+					SaveReq: SaveReq{
+						CounterpartyType:     enum.CounterpartyTypeOrganization,
+						CounterpartyProperty: enum.CounterpartyPropertyThirdPerson,
+					},
+					EDRPOU:  "12345678",
+					CityRef: uuid.MustParse("8d5a980d-391c-11dd-90d9-001a92567626"),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Ref:                      uuid.MustParse("32c445a1-dec8-11ed-a60f-48df37b921db"),
+					Description:              "DeFacto",
+					FirstName:                "DeFacto",
+					MiddleName:               "",
+					LastName:                 "",
+					Counterparty:             types.UUID(uuid.MustParse("e9de5dd9-8646-ea11-80f9-005056b29404")),
+					OwnershipForm:            types.UUID(uuid.MustParse("7f0f351d-2519-11df-be9a-000c291af1b3")),
+					OwnershipFormDescription: "ТОВ",
+					EDRPOU:                   "12345678",
+					CounterpartyType:         enum.CounterpartyTypeOrganization,
+				}}, res)
+			}),
+		},
+		"SaveThirdPersonError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveThirdPerson(SaveThirdPersonReq{
+					SaveReq: SaveReq{
+						CounterpartyType:     enum.CounterpartyTypeOrganization,
+						CounterpartyProperty: enum.CounterpartyPropertyThirdPerson,
+					},
+					EDRPOU:  "12345678",
+					CityRef: uuid.MustParse("8d5a980d-391c-11dd-90d9-001a92567626"),
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("EDRPOU can't be empty for Organization")),
+		},
+		"SaveOrganizationDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveOrganization(SaveOrganizationReq{
+					SaveReq: SaveReq{
+						CounterpartyType:     enum.CounterpartyTypeOrganization,
+						CounterpartyProperty: enum.CounterpartyPropertyRecipient,
+					},
+					EDRPOU: "12345678",
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Ref:                      uuid.MustParse("9b768ccd-dec8-11ed-a60f-48df37b921db"),
+					Description:              "DeFacto",
+					FirstName:                "",
+					MiddleName:               "",
+					LastName:                 "",
+					Counterparty:             types.UUID(uuid.Nil),
+					OwnershipForm:            types.UUID(uuid.MustParse("7f0f351d-2519-11df-be9a-000c291af1b3")),
+					OwnershipFormDescription: "ТОВ",
+					EDRPOU:                   "12345678",
+					CounterpartyType:         enum.CounterpartyTypeOrganization,
+				}}, res)
+			}),
+		},
+		"SaveOrganizationError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveOrganization(SaveOrganizationReq{
+					SaveReq: SaveReq{
+						CounterpartyType:     enum.CounterpartyTypeOrganization,
+						CounterpartyProperty: enum.CounterpartyPropertyRecipient,
+					},
+					EDRPOU: "12345678",
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("EDRPOU can't be empty for Organization")),
+		},
+		"UpdateDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Update(UpdateReq{
+					Ref:                  uuid.MustParse("19710832-3af1-11eb-8513-b88303659df5"),
+					CityRef:              uuid.MustParse("dd80fab1-df13-4802-8a96-984aa2bc9b17"),
 					CounterpartyType:     enum.CounterpartyTypePrivatePerson,
 					CounterpartyProperty: enum.CounterpartyPropertyRecipient,
 					FirstName:            "Іван",
 					LastName:             "Іванов",
 					MiddleName:           "Іванович",
-					Phone:                ptr(types.Phone("380997979789")),
-					Email:                ptr(types.Email("test@i.com")),
+					Phone:                utils.PTR(string("380997979789")),
+					Email:                utils.PTR(string("test@i.com")),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SaveResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
 					Ref:              uuid.MustParse("19710832-3af1-11eb-8513-b88303659df5"),
 					Description:      "Приватна особа",
 					FirstName:        "Іван",
@@ -90,106 +159,55 @@ func TestApi(t *testing.T) {
 					LastName:         "Іванов",
 					CounterpartyType: enum.CounterpartyTypePrivatePerson,
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "UpdateError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Update(UpdateData{
-					Ref:                  uuid.MustParse(testdata.FakeUUID),
-					CityRef:              uuid.MustParse(testdata.FakeUUID),
+		"UpdateError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Update(UpdateReq{
+					Ref:                  uuid.MustParse("19710832-3af1-11eb-8513-b88303659df5"),
+					CityRef:              uuid.MustParse("dd80fab1-df13-4802-8a96-984aa2bc9b17"),
 					CounterpartyType:     enum.CounterpartyTypePrivatePerson,
 					CounterpartyProperty: enum.CounterpartyPropertyRecipient,
 					FirstName:            "Іван",
 					LastName:             "Іванов",
 					MiddleName:           "Іванович",
-					Phone:                ptr(types.Phone("380997979789")),
-					Email:                ptr(types.Email("test@i.com")),
+					Phone:                utils.PTR(string("380997979789")),
+					Email:                utils.PTR(string("test@i.com")),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("CityRef is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("CityRef is not specified")),
 		},
-		{
-			name:   "DeleteDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Delete(DeleteData{
-					Ref: uuid.MustParse(testdata.FakeUUID),
+		"DeleteDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: uuid.MustParse("fb6dcee6-de27-11ed-a60f-48df37b921db"),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, DeleteResult{{
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, DeleteRes{{
 					Ref: uuid.MustParse("fb6dcee6-de27-11ed-a60f-48df37b921db"),
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "DeleteError",
-			format: testdata.FormatJSON,
-			reqCallback: func(c any) (any, error) {
-				return c.(Api).Delete(DeleteData{
-					Ref: uuid.MustParse(testdata.FakeUUID),
+		"DeleteError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: uuid.MustParse("fb6dcee6-de27-11ed-a60f-48df37b921db"),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("Ref is incorrect"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("Ref is incorrect")),
 		},
 	}
 
-	for _, tc := range testCases {
-		stubFileName := fmt.Sprintf("%s.%s", tc.name, tc.format)
+	for name, tc := range testCases {
+		testDataPath, err := filepath.Abs("./testdata")
 
-		mockBasePath := "./testdata"
-		reqPath := fmt.Sprintf("%s/request/%s", mockBasePath, stubFileName)
-
-		var reqBody []byte
-		if _, err := os.Stat(reqPath); err == nil {
-			reqBody, err = os.ReadFile(reqPath)
-			require.NoError(t, err)
-		}
-
-		resPath := fmt.Sprintf("%s/response/%s", mockBasePath, stubFileName)
-
-		var resBody []byte
-		_, err := os.Stat(resPath)
-		require.NoError(t, err)
-		resBody, err = os.ReadFile(resPath)
 		require.NoError(t, err)
 
-		testCase := testdata.ApiTestCase{
-			Name:           tc.name,
-			ReqBody:        reqBody,
-			ReqCallback:    tc.reqCallback,
-			ResBody:        resBody,
-			ResCallback:    tc.resCallback,
-			ExpectErr:      tc.expectErr,
-			HttpStatusCode: http.StatusOK,
-		}
+		tc = append(tc, testdata.WithTestDataPath[Model](testDataPath))
 
-		c := NewApi(adapter.NewAdapter(adapter.CreateConfig(
-			testdata.FakeApiKey,
-			adapter.WithHTTPClient(testdata.CreateFakeHTTPClient(t, testCase)),
-			adapter.WithFormat(adapter.FormatJSON),
-		)))
-
-		testdata.RunApiTestCase(t, testCase, c)
+		tc.Run(t, name, func(adp adapter.RequestAdapter) Model {
+			return NewModel(adp)
+		})
 	}
-}
-
-type apiTestCase struct {
-	name   string
-	format testdata.Format
-
-	reqCallback func(c any) (any, error)
-	resCallback func(res any)
-
-	expectErr error
-}
-
-func ptr[T any](v T) *T {
-	return &v
 }

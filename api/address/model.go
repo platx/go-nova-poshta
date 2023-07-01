@@ -2,117 +2,113 @@ package address
 
 import "github.com/platx/go-nova-poshta/api"
 
-type Api interface {
+type Model interface {
+	api.Model
+
 	// SearchSettlements https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a0eb83ab-8512-11ec-8ced-005056b2dbe1
-	SearchSettlements(SearchSettlementsFilter) (SearchSettlementResult, error)
+	SearchSettlements(SearchSettlementsReq) (SearchSettlementRes, error)
 
 	// SearchSettlementStreets https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a1329635-8512-11ec-8ced-005056b2dbe1
-	SearchSettlementStreets(SearchSettlementStreetsFilter) (SearchSettlementStreetsResult, error)
+	SearchSettlementStreets(SearchSettlementStreetsReq) (SearchSettlementStreetsRes, error)
 
 	// Save https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a155d0d9-8512-11ec-8ced-005056b2dbe1
-	Save(CreateData) (SaveResult, error)
+	Save(CreateReq) (SaveRes, error)
 
 	// Delete https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a177069a-8512-11ec-8ced-005056b2dbe1
-	Delete(DeleteData) (DeleteResult, error)
+	Delete(DeleteReq) (DeleteRes, error)
 
 	// Update https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a19ba934-8512-11ec-8ced-005056b2dbe1
-	Update(UpdateData) (SaveResult, error)
+	Update(UpdateReq) (SaveRes, error)
 
 	// GetSettlements https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a1c42723-8512-11ec-8ced-005056b2dbe1
-	GetSettlements(GetSettlementsFilter) (GetSettlementsResult, error)
+	GetSettlements(GetSettlementsReq) (GetSettlementsRes, error)
 
 	// GetCities https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a1e6f0a7-8512-11ec-8ced-005056b2dbe1
-	GetCities(GetCitiesFilter) (GetCitiesResult, error)
+	GetCities(GetCitiesReq) (GetCitiesRes, error)
 
 	// GetAreas https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a20ee6e4-8512-11ec-8ced-005056b2dbe1
-	GetAreas() (GetAreasResult, error)
+	GetAreas() (GetAreasRes, error)
 
 	// GetWarehouses https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a2322f38-8512-11ec-8ced-005056b2dbe1
-	GetWarehouses(GetWarehousesFilter) (GetWarehousesResult, error)
+	GetWarehouses(GetWarehousesReq) (GetWarehousesRes, error)
 
 	// GetWarehouseTypes https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a2587b53-8512-11ec-8ced-005056b2dbe1
-	GetWarehouseTypes() (GetWarehouseTypesResult, error)
+	GetWarehouseTypes() (GetWarehouseTypesRes, error)
 
 	// GetStreet https://developers.novaposhta.ua/view/model/a0cf0f5f-8512-11ec-8ced-005056b2dbe1/method/a27c20d7-8512-11ec-8ced-005056b2dbe1
-	GetStreet(GetStreetFilter) (GetStreetResult, error)
-}
-
-const modelName = "Address"
-
-type client interface {
-	Call(model string, method string, props any, res any) error
+	GetStreet(GetStreetReq) (GetStreetRes, error)
 }
 
 type model struct {
 	api.Model
 }
 
-func NewApi(client client) Api {
-	return &model{api.Model{c: client, name: modelName}}
+func NewModel(client api.Client) Model {
+	return &model{api.NewModel(client, "Address")}
 }
 
-func (c *model) SearchSettlements(props SearchSettlementsFilter) (SearchSettlementResult, error) {
-	var res SearchSettlementResult
+func (m *model) SearchSettlements(req SearchSettlementsReq) (SearchSettlementRes, error) {
+	var res SearchSettlementRes
 
-	return res, c.call("searchSettlements", props, &res)
+	return res, m.Call("searchSettlements", req, &res)
 }
 
-func (c *model) SearchSettlementStreets(props SearchSettlementStreetsFilter) (SearchSettlementStreetsResult, error) {
-	var res SearchSettlementStreetsResult
+func (m *model) SearchSettlementStreets(req SearchSettlementStreetsReq) (SearchSettlementStreetsRes, error) {
+	var res SearchSettlementStreetsRes
 
-	return res, c.call("searchSettlementStreets", props, &res)
+	return res, m.Call("searchSettlementStreets", req, &res)
 }
 
-func (c *model) Save(props CreateData) (SaveResult, error) {
-	var res SaveResult
+func (m *model) Save(req CreateReq) (SaveRes, error) {
+	var res SaveRes
 
-	return res, c.call("save", props, &res)
+	return res, m.Call("save", req, &res)
 }
 
-func (c *model) Delete(props DeleteData) (DeleteResult, error) {
-	var res DeleteResult
+func (m *model) Delete(req DeleteReq) (DeleteRes, error) {
+	var res DeleteRes
 
-	return res, c.call("delete", props, &res)
+	return res, m.Call("delete", req, &res)
 }
 
-func (c *model) Update(props UpdateData) (SaveResult, error) {
-	var res SaveResult
+func (m *model) Update(req UpdateReq) (SaveRes, error) {
+	var res SaveRes
 
-	return res, c.call("update", props, &res)
+	return res, m.Call("update", req, &res)
 }
 
-func (c *model) GetSettlements(props GetSettlementsFilter) (GetSettlementsResult, error) {
-	var res GetSettlementsResult
+func (m *model) GetSettlements(req GetSettlementsReq) (GetSettlementsRes, error) {
+	var res GetSettlementsRes
 
-	return res, c.call("getSettlements", props, &res)
+	return res, m.Call("getSettlements", req, &res)
 }
 
-func (c *model) GetCities(props GetCitiesFilter) (GetCitiesResult, error) {
-	var res GetCitiesResult
+func (m *model) GetCities(req GetCitiesReq) (GetCitiesRes, error) {
+	var res GetCitiesRes
 
-	return res, c.call("getCities", props, &res)
+	return res, m.Call("getCities", req, &res)
 }
 
-func (c *model) GetAreas() (GetAreasResult, error) {
-	var res GetAreasResult
+func (m *model) GetAreas() (GetAreasRes, error) {
+	var res GetAreasRes
 
-	return res, c.call("getAreas", nil, &res)
+	return res, m.Call("getAreas", nil, &res)
 }
 
-func (c *model) GetWarehouses(props GetWarehousesFilter) (GetWarehousesResult, error) {
-	var res GetWarehousesResult
+func (m *model) GetWarehouses(req GetWarehousesReq) (GetWarehousesRes, error) {
+	var res GetWarehousesRes
 
-	return res, c.call("getWarehouses", props, &res)
+	return res, m.Call("getWarehouses", req, &res)
 }
 
-func (c *model) GetWarehouseTypes() (GetWarehouseTypesResult, error) {
-	var res GetWarehouseTypesResult
+func (m *model) GetWarehouseTypes() (GetWarehouseTypesRes, error) {
+	var res GetWarehouseTypesRes
 
-	return res, c.call("getWarehouseTypes", nil, &res)
+	return res, m.Call("getWarehouseTypes", nil, &res)
 }
 
-func (c *model) GetStreet(props GetStreetFilter) (GetStreetResult, error) {
-	var res GetStreetResult
+func (m *model) GetStreet(req GetStreetReq) (GetStreetRes, error) {
+	var res GetStreetRes
 
-	return res, c.call("getStreet", props, &res)
+	return res, m.Call("getStreet", req, &res)
 }

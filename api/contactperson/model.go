@@ -1,48 +1,42 @@
 package contactperson
 
-type Api interface {
+import "github.com/platx/go-nova-poshta/api"
+
+type Model interface {
+	api.Model
+
 	// Save https://developers.novaposhta.ua/view/model/a39040c4-8512-11ec-8ced-005056b2dbe1/method/a3a25bda-8512-11ec-8ced-005056b2dbe1
-	Save(CreateData) (SaveResult, error)
+	Save(CreateReq) (SaveRes, error)
 
 	// Update https://developers.novaposhta.ua/view/model/a39040c4-8512-11ec-8ced-005056b2dbe1/method/a3c5a577-8512-11ec-8ced-005056b2dbe1
-	Update(UpdateData) (SaveResult, error)
+	Update(UpdateReq) (SaveRes, error)
 
 	// Delete https://developers.novaposhta.ua/view/model/a39040c4-8512-11ec-8ced-005056b2dbe1/method/a3ea91c8-8512-11ec-8ced-005056b2dbe1
-	Delete(DeleteData) (DeleteResult, error)
+	Delete(DeleteReq) (DeleteRes, error)
 }
 
-const modelName = "ContactPerson"
-
-type client interface {
-	Call(model string, method string, props any, res any) error
+type model struct {
+	api.Model
 }
 
-type api struct {
-	client
+func NewModel(client api.Client) Model {
+	return &model{api.NewModel(client, "ContactPerson")}
 }
 
-func NewApi(client client) Api {
-	return &api{client: client}
+func (m *model) Save(req CreateReq) (SaveRes, error) {
+	var res SaveRes
+
+	return res, m.Call("save", req, &res)
 }
 
-func (c *api) call(method string, props any, res any) error {
-	return c.Call(modelName, method, props, res)
+func (m *model) Update(req UpdateReq) (SaveRes, error) {
+	var res SaveRes
+
+	return res, m.Call("update", req, &res)
 }
 
-func (c *api) Save(props CreateData) (SaveResult, error) {
-	var res SaveResult
+func (m *model) Delete(req DeleteReq) (DeleteRes, error) {
+	var res DeleteRes
 
-	return res, c.call("save", props, &res)
-}
-
-func (c *api) Update(props UpdateData) (SaveResult, error) {
-	var res SaveResult
-
-	return res, c.call("update", props, &res)
-}
-
-func (c *api) Delete(props DeleteData) (DeleteResult, error) {
-	var res DeleteResult
-
-	return res, c.call("delete", props, &res)
+	return res, m.Call("delete", req, &res)
 }

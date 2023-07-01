@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/platx/go-nova-poshta/custom/types"
 )
 
 const baseUrlTemplate = "https://api.novaposhta.ua/v2.0/%s/"
@@ -23,15 +25,15 @@ type request struct {
 }
 
 type response struct {
-	Success      bool     `json:"success" xml:"success"`
-	Data         any      `json:"data" xml:"data"`
-	Errors       []string `json:"errors" xml:"errors"`
-	Warnings     any      `json:"warnings" xml:"warnings"` // FIXME: empty array or map[string]any or []map[string]string
-	Info         any      `json:"info" xml:"info"`         // FIXME: empty array or map[string]any
-	MessageCodes []string `json:"messageCodes" xml:"messageCodes"`
-	ErrorCodes   []string `json:"errorCodes" xml:"errorCodes"`
-	WarningCodes []string `json:"warningCodes" xml:"warningCodes"`
-	InfoCodes    []string `json:"infoCodes" xml:"infoCodes"`
+	Success      bool                   `json:"success" xml:"success"`
+	Data         any                    `json:"data" xml:"data"`
+	Errors       types.Messages[string] `json:"errors" xml:"errors"`
+	Warnings     types.Messages[string] `json:"warnings" xml:"warnings"`
+	Info         types.Messages[string] `json:"info" xml:"info"`
+	MessageCodes types.Messages[string] `json:"messageCodes" xml:"messageCodes"`
+	ErrorCodes   types.Messages[string] `json:"errorCodes" xml:"errorCodes"`
+	WarningCodes types.Messages[string] `json:"warningCodes" xml:"warningCodes"`
+	InfoCodes    types.Messages[string] `json:"infoCodes" xml:"infoCodes"`
 }
 
 type HTTPClient interface {
@@ -39,7 +41,7 @@ type HTTPClient interface {
 }
 
 type RequestAdapter interface {
-	Req(modelName string, calledMethod string, props any, res any) error
+	Call(modelName string, calledMethod string, props any, resData any) error
 }
 
 type httpAdapter struct {
@@ -61,21 +63,49 @@ func NewAdapter(cfg Config) RequestAdapter {
 	return &httpAdapter{
 		http:       cfg.HTTPClient,
 		baseUrl:    baseUrl,
-		serializer: newSerializer(cfg.Format),
+		serializer: newSerializer(cfg.Format, cfg.Debug),
 		apiKey:     cfg.ApiKey,
 	}
 }
 
-func (c *httpAdapter) Req(modelName string, calledMethod string, reqProps any, resData any) error {
-	if reqProps == nil {
-		reqProps = struct{}{}
+func (c *httpAdapter) Call(model string, method string, props any, resData any) error {
+	req := request{
+		ModelName:        model,
+		CalledMethod:     method,
+		MethodProperties: props,
 	}
 
-	req := request{
-		ApiKey:           c.apiKey,
-		ModelName:        modelName,
-		CalledMethod:     calledMethod,
-		MethodProperties: reqProps,
+	res := &response{Data: resData}
+
+	if err := c.do(req, res); err != nil {
+		return err
+	}
+
+	if !res.Success {
+		var errs []error
+
+		for i, errCode := range res.ErrorCodes {
+			trans, ok := ErrorTranslations[errCode]["en"]
+			if !ok {
+				trans = res.Errors[i]
+			}
+
+			errs = append(errs, errors.New(trans))
+		}
+
+		return fmt.Errorf("request failed => %w", errors.Join(errs...))
+	}
+
+	return nil
+}
+
+func (c *httpAdapter) do(req request, res *response) error {
+	if req.MethodProperties == nil {
+		req.MethodProperties = struct{}{}
+	}
+
+	if req.ApiKey == "" {
+		req.ApiKey = c.apiKey
 	}
 
 	encReq, err := c.serializer.encode(req)
@@ -93,20 +123,8 @@ func (c *httpAdapter) Req(modelName string, calledMethod string, reqProps any, r
 		return fmt.Errorf("send http request failed => %w", err)
 	}
 
-	res := &response{Data: resData}
-
 	if err = c.serializer.decode(httpRes.Body, res); err != nil {
 		return fmt.Errorf("decode response failed => %w", err)
-	}
-
-	if !res.Success {
-		var errs []error
-
-		for _, resErr := range res.Errors {
-			errs = append(errs, errors.New(resErr))
-		}
-
-		return fmt.Errorf("request failed => %w", errors.Join(errs...))
 	}
 
 	return nil

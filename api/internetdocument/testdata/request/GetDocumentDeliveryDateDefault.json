@@ -1,28 +1,11 @@
 {
   "apiKey": "fake-token",
   "modelName": "InternetDocument",
-  "calledMethod": "getDocumentPrice",
+  "calledMethod": "getDocumentDeliveryDate",
   "methodProperties": {
-    "CitySender": "c92a8f8a-2f58-4f13-9d74-d271872f3658",
-    "CityRecipient": "fa61ec3f-70c8-409f-b614-fc2b34a53c8e",
-    "Weight": 0.1,
+    "DateTime": "01.01.2019",
     "ServiceType": "WarehouseWarehouse",
-    "Cost": 300,
-    "CargoType": "Cargo",
-    "SeatsAmount": 2,
-    "RedeliveryCalculate": {
-      "CargoType": "Money",
-      "Amount": 100
-    },
-    "PackCount": 1,
-    "PackRef": "6ffd155b-7bf6-429c-b6fb-e42f6ccb81ef",
-    "Amount": 100,
-    "CargoDetails": [
-      {
-        "CargoDescription": "64a6d194-db5f-4643-bfdf-24e66da4d42f",
-        "Amount": 2
-      }
-    ],
-    "CargoDescription": "e3b5f47e-b571-4c5c-8f53-036f0069e92e"
+    "CitySender": "c92a8f8a-2f58-4f13-9d74-d271872f3658",
+    "CityRecipient": "fa61ec3f-70c8-409f-b614-fc2b34a53c8e"
   }
 }

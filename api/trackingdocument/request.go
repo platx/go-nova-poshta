@@ -1,12 +1,10 @@
 package trackingdocument
 
-import "github.com/platx/go-nova-poshta/custom/types"
-
 type DocumentFilter struct {
-	DocumentNumber string      `json:"DocumentNumber"`
-	Phone          types.Phone `json:"Phone"`
+	DocumentNumber string `json:"DocumentNumber"`
+	Phone          string `json:"Phone"`
 }
 
-type GetStatusDocumentsFilter struct {
+type GetStatusDocumentsReq struct {
 	Documents []DocumentFilter
 }

@@ -2,11 +2,7 @@
   "success": true,
   "data": [
     {
-      "Ref": "157bb4f4-09e5-4bfb-8d3f-603661fb36b2",
-      "CostOnSite": "45",
-      "EstimatedDeliveryDate": "01.01.2019",
-      "IntDocNumber": "20600000002545",
-      "TypeDocument": "InternetDocument"
+      "Ref": "157bb4f4-09e5-4bfb-8d3f-603661fb36b2"
     }
   ],
   "errors": [],

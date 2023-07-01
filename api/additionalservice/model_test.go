@@ -1,524 +1,513 @@
-package address
+package additionalservice
 
 import (
 	"errors"
-	"fmt"
+	"path/filepath"
+	"testing"
+
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/platx/go-nova-poshta/adapter"
 	"github.com/platx/go-nova-poshta/custom/enum"
 	"github.com/platx/go-nova-poshta/custom/types"
 	"github.com/platx/go-nova-poshta/testdata"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"net/http"
-	"os"
-	"testing"
+	"github.com/platx/go-nova-poshta/utils"
 )
 
-func TestApi(t *testing.T) {
+func TestModel(t *testing.T) {
 	t.Parallel()
 
-	testCases := []apiTestCase{
-		{
-			name:   "SearchSettlementsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.SearchSettlements(SearchSettlementsRequest{
-					CityName: "Київ",
-					Limit:    testdata.PTR(10),
-					Page:     testdata.PTR(1),
+	testCases := map[string]testdata.ApiTestParams[Model]{
+		"CheckPossibilityCreateReturnDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.CheckPossibilityCreateReturn(CheckPossibilityCreateReturnReq{
+					Number: "20450520287825",
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SearchSettlementResponse{{
-					TotalCount: 10,
-					Addresses: []SearchSettlementAddress{{
-						Present:                "м. Київ, Київська обл.",
-						Warehouses:             6231,
-						MainDescription:        "Київ",
-						Area:                   "Київська",
-						SettlementTypeCode:     "м.",
-						Ref:                    uuid.MustParse("e718a680-4b33-11e4-ab6d-005056801329"),
-						DeliveryCity:           uuid.MustParse("8d5a980d-391c-11dd-90d9-001a92567626"),
-						AddressDeliveryAllowed: true,
-						StreetsAvailability:    true,
-						ParentRegionTypes:      "область",
-						ParentRegionCode:       "обл.",
-					}, {
-						Present:                "с. Київець, Миколаївський р-н, Львівська обл.",
-						Warehouses:             2,
-						MainDescription:        "Київець",
-						Area:                   "Львівська",
-						Region:                 "Миколаївський",
-						SettlementTypeCode:     "с.",
-						Ref:                    uuid.MustParse("0df25497-4b3a-11e4-ab6d-005056801329"),
-						DeliveryCity:           uuid.MustParse("6dbe5985-96d1-11ea-a970-b8830365ade4"),
-						AddressDeliveryAllowed: true,
-						ParentRegionTypes:      "область",
-						ParentRegionCode:       "обл.",
-						RegionTypes:            "район",
-						RegionTypesCode:        "р-н",
-					}},
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, CheckPossibilityCreateReturnRes{{
+					NonCash:       true,
+					City:          "Київ",
+					Counterparty:  "ТОВ Яблуневий сад",
+					ContactPerson: "Іванов Іван Іванович",
+					Address:       "м. Київ,  вул. Хрещатик, буд. 1",
+					Phone:         "380950000000",
+					Ref:           types.UUID(uuid.MustParse("e17aee06-47f4-4ef1-a9d7-b276688b906d")),
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SearchSettlementsEmpty",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.SearchSettlements(SearchSettlementsRequest{
-					CityName: "Київ",
+		"CheckPossibilityCreateReturnError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.CheckPossibilityCreateReturn(CheckPossibilityCreateReturnReq{
+					Number: "20450520287825",
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SearchSettlementResponse{{
-					TotalCount: 0,
-					Addresses:  []SearchSettlementAddress{},
+			}),
+			testdata.WithExpectErr[Model](errors.New("Експрес-накладна не знайдена або не існує. Перевірте номер")),
+		},
+		"GetReturnReasonsDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetReturnReasons()
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetReturnReasonsRes{{
+					Ref:         types.UUID(uuid.MustParse("411ceab2-b5e1-4433-ad52-a2ea22be56e6")),
+					Description: "Відмова Одержувача",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SearchSettlementStreetsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.SearchSettlementStreets(SearchSettlementStreetsRequest{
-					StreetName:    "Хрещатик",
-					SettlementRef: uuid.MustParse(testdata.FakeUUID),
-					Limit:         testdata.PTR(10),
+		"GetReturnReasonsSubtypesDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetReturnReasonsSubtypes(GetReturnReasonsSubtypesReq{
+					ReasonRef: utils.PTR(types.UUID(uuid.MustParse("72226bae-1007-4421-89fa-7e2583862411"))),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SearchSettlementStreetsResponse{{
-					TotalCount: 1,
-					Addresses: []SettlementStreetAddress{{
-						SettlementRef:                 uuid.MustParse("e718a680-4b33-11e4-ab6d-005056801329"),
-						SettlementStreetRef:           uuid.MustParse("ad090b1f-6845-11e6-8304-00505688561d"),
-						SettlementStreetDescription:   "Хрещатик",
-						SettlementStreetDescriptionRu: "Крещатик",
-						Present:                       "вул. Хрещатик",
-						StreetsType:                   uuid.MustParse("0f1d7fbb-4bba-11e4-ab6d-005056801329"),
-						StreetsTypeDescription:        "вул.",
-						Location: Location{
-							Latitude:  50.44806099962443,
-							Longitude: 30.52225599065423,
-						},
-					}},
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetReturnReasonsSubtypesRes{{
+					Ref:         types.UUID(uuid.MustParse("0679cdb5-898e-11ea-a970-b8830365ade4")),
+					ReasonRef:   types.UUID(uuid.MustParse("49754eb2-a9e1-11e3-9fa0-0050568002cf")),
+					Description: "Автоповернення",
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SearchSettlementStreetsError",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.SearchSettlementStreets(SearchSettlementStreetsRequest{
-					StreetName:    "Хрещатик",
-					SettlementRef: uuid.MustParse(testdata.FakeUUID),
-				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("SettlementRef is invalid"),
+		"GetReturnReasonsSubtypesEmpty": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetReturnReasonsSubtypes(GetReturnReasonsSubtypesReq{})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetReturnReasonsSubtypesRes{}, res)
+			}),
 		},
-		{
-			name:   "GetSettlementsDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.GetSettlements(GetSettlementsRequest{
-					AreaRef:      testdata.PTR(uuid.MustParse(testdata.FakeUUID)),
-					Ref:          testdata.PTR(uuid.MustParse(testdata.FakeUUID)),
-					RegionRef:    testdata.PTR(uuid.MustParse(testdata.FakeUUID)),
-					Warehouse:    testdata.PTR(true),
-					FindByString: testdata.PTR("Київ"),
-					Limit:        testdata.PTR(10),
-					Page:         testdata.PTR(1),
+		"CheckPossibilityForRedirectingDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.CheckPossibilityForRedirecting(CheckPossibilityCreateReturnReq{
+					Number: "20450520287825",
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetSettlementsResponse{{
-					Ref:                               uuid.MustParse("0e451e40-4b3a-11e4-ab6d-005056801329"),
-					SettlementType:                    uuid.MustParse("563ced13-f210-11e3-8c4a-0050568002cf"),
-					Latitude:                          types.FloatString(49.605372000000000),
-					Longitude:                         types.FloatString(34.335613000000000),
-					Description:                       "Абазівка",
-					DescriptionRu:                     "Абазовка",
-					DescriptionTranslit:               "Abazivka",
-					SettlementTypeDescription:         "село",
-					SettlementTypeDescriptionRu:       "село",
-					SettlementTypeDescriptionTranslit: "selo",
-					Region:                            uuid.MustParse("e4ade6ea-4b33-11e4-ab6d-005056801329"),
-					RegionsDescription:                "Полтавський р-н",
-					RegionsDescriptionRu:              "Полтавский р-н",
-					RegionsDescriptionTranslit:        "Poltavskyi",
-					Area:                              uuid.MustParse("dcaadf02-4b33-11e4-ab6d-005056801329"),
-					AreaDescription:                   "Полтавська область",
-					AreaDescriptionRu:                 "Полтавская область",
-					AreaDescriptionTranslit:           "Poltavska",
-					Index1:                            "38715",
-					Index2:                            "38715",
-					IndexCOATSU1:                      "5324080101",
-					Delivery1:                         true,
-					Delivery3:                         true,
-					Delivery5:                         true,
-					SpecialCashCheck:                  true,
-					Warehouse:                         true,
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, CheckPossibilityForRedirectingRes{{
+					Ref:                              types.UUID(uuid.MustParse("12d83dfa-7084-4b11-8dac-432b98678bc4")),
+					Number:                           "20600000065609",
+					PayerType:                        "Sender",
+					PaymentMethod:                    "Cash",
+					WarehouseRef:                     types.UUID(uuid.MustParse("1989c63e-f5a8-4da0-a3c0-ed7e82441eae")),
+					WarehouseDescription:             "Відділення №23 (до 30 кг): просп. М. Бажана, 24/1 (м. Позняки)",
+					AddressDescription:               "просп. М. Бажана, 24/1 (м. Позняки)",
+					StreetDescription:                "просп. М. Бажана, 24/1 (м. Позняки)",
+					BuildingNumber:                   "24-Jan",
+					CityRecipient:                    types.UUID(uuid.MustParse("c29556ef-06bb-4c65-933a-396877a54f82")),
+					CityRecipientDescription:         "Київ",
+					SettlementRecipient:              types.UUID(uuid.MustParse("eed2ac1a-8a7b-42db-8131-10b5cd8d7db4")),
+					SettlementRecipientDescription:   "Київ",
+					SettlementType:                   types.UUID(uuid.MustParse("cc5fe59a-a8af-480b-b3d5-26b066d2617a")),
+					CounterpartyRecipientRef:         types.UUID(uuid.MustParse("ad08451f-8748-41b6-ac55-41fa59d2bac1")),
+					CounterpartyRecipientDescription: "101-10378782",
+					RecipientName:                    "Іванов Іван Іванович",
+					PhoneSender:                      "380675387254",
+					PhoneRecipient:                   "380991234567",
+					DocumentWeight:                   types.FloatString(1),
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SaveDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.Save(CreateRequest{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
-					BuildingNumber:  "7",
-					Flat:            testdata.PTR("2"),
-					Note:            testdata.PTR("комментарий"),
+		"CheckPossibilityForRedirectingError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.CheckPossibilityForRedirecting(CheckPossibilityCreateReturnReq{
+					Number: "20450520287825",
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SaveResponse{{
-					Ref:         uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
-					Description: "1-а Вишнева вул. 7 кв. 2 Комментарий",
+			}),
+			testdata.WithExpectErr[Model](errors.New("Express Waybill document not found")),
+		},
+		"CheckPossibilityChangeEWDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.CheckPossibilityChangeEW(CheckPossibilityChangeEWReq{
+					IntDocNumber: "20450500000012",
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, CheckPossibilityChangeEWRes{{
+					CanChangeSender:                     true,
+					CanChangeRecipient:                  true,
+					CanChangePayerTypeOrPaymentMethod:   true,
+					CanChangeBackwardDeliveryDocuments:  true,
+					CanChangeBackwardDeliveryMoney:      true,
+					CanChangeCash2Card:                  true,
+					CanChangeBackwardDeliveryOther:      true,
+					CanChangeAfterpaymentType:           true,
+					CanChangeLiftingOnFloor:             true,
+					CanChangeLiftingOnFloorWithElevator: true,
+					CanChangeFillingWarranty:            true,
+					SenderCounterparty:                  "ПП ВКФ \"КАРАТ\"",
+					ContactPersonSender:                 "Іванов Іван Іванович",
+					SenderPhone:                         "380685024447",
+					RecipientCounterparty:               "Приватна особа",
+					ContactPersonRecipient:              "Іванов Іван Іванович",
+					RecipientPhone:                      "380685024447",
+					PayerType:                           enum.PayerTypeRecipient,
+					PaymentMethod:                       enum.PaymentMethodCash,
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "SaveError",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.Save(CreateRequest{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
-					BuildingNumber:  "7",
-					Flat:            testdata.PTR("2"),
-					Note:            nil,
+		"CheckPossibilityChangeEWError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.CheckPossibilityChangeEW(CheckPossibilityChangeEWReq{
+					IntDocNumber: "20450500000012",
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("StreetRef is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("IntDocNumber is incorrect")),
 		},
-		{
-			name:   "DeleteDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.Delete(DeleteRequest{
-					Ref: uuid.MustParse(testdata.FakeUUID),
-				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, DeleteResponse{{
-					Ref: uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
-				}}, res)
-			},
-			expectErr: nil,
-		},
-		{
-			name:   "DeleteError",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.Delete(DeleteRequest{
-					Ref: uuid.MustParse(testdata.FakeUUID),
-				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("Ref is not specified"),
-		},
-		{
-			name:   "UpdateDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.Update(UpdateRequest{
-					Ref:             uuid.MustParse(testdata.FakeUUID),
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
-					BuildingNumber:  "7",
-					Flat:            testdata.PTR("2"),
-					Note:            testdata.PTR("комментарий"),
-				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, SaveResponse{{
-					Ref:         uuid.MustParse("339f0b8d-da35-11ed-a60f-48df37b921db"),
-					Description: "1-а Вишнева вул. 7 кв. 2 Комментарий",
-				}}, res)
-			},
-			expectErr: nil,
-		},
-		{
-			name:   "UpdateError",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.Update(UpdateRequest{
-					CounterpartyRef: uuid.MustParse(testdata.FakeUUID),
-					StreetRef:       uuid.MustParse(testdata.FakeUUID),
-					BuildingNumber:  "7",
-					Flat:            testdata.PTR("2"),
-					Note:            nil,
-				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("StreetRef is not specified"),
-		},
-		{
-			name:   "GetCitiesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.GetCities(GetCitiesRequest{
-					Ref:          testdata.PTR(uuid.MustParse(testdata.FakeUUID)),
-					FindByString: testdata.PTR("Київ"),
-					Limit:        testdata.PTR(10),
-					Page:         testdata.PTR(1),
-				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetCitiesResponse{{
-					Description:                 "Київ",
-					DescriptionRu:               "Киев",
-					Ref:                         uuid.MustParse("8d5a980d-391c-11dd-90d9-001a92567626"),
-					Delivery1:                   true,
-					Delivery2:                   true,
-					Delivery3:                   true,
-					Delivery4:                   true,
-					Delivery5:                   true,
-					Delivery6:                   true,
-					Delivery7:                   true,
-					Area:                        uuid.MustParse("71508131-9b87-11de-822f-000c2965ae0e"),
-					SettlementType:              uuid.MustParse("563ced10-f210-11e3-8c4a-0050568002cf"),
-					IsBranch:                    true,
-					CityID:                      4,
-					SettlementTypeDescription:   "місто",
-					SettlementTypeDescriptionRu: "город",
-					SpecialCashCheck:            true,
-					AreaDescription:             "Київська",
-					AreaDescriptionRu:           "Киевская",
-				}}, res)
-			},
-			expectErr: nil,
-		},
-		{
-			name:   "GetAreasDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.GetAreas()
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetAreasResponse{{
-					Ref:           uuid.MustParse("71508128-9b87-11de-822f-000c2965ae0e"),
-					AreasCenter:   uuid.MustParse("db5c88b7-391c-11dd-90d9-001a92567626"),
-					DescriptionRu: "АРК",
-					Description:   "АРК",
-				}, {
-					Ref:           uuid.MustParse("71508129-9b87-11de-822f-000c2965ae0e"),
-					AreasCenter:   uuid.MustParse("db5c88de-391c-11dd-90d9-001a92567626"),
-					DescriptionRu: "Винницкая",
-					Description:   "Вінницька",
-				}}, res)
-			},
-			expectErr: nil,
-		},
-		{
-			name:   "GetWarehousesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.GetWarehouses(GetWarehousesRequest{
-					CityName:           testdata.PTR("Київ"),
-					CityRef:            testdata.PTR(uuid.MustParse(testdata.FakeUUID)),
-					TypeOfWarehouseRef: testdata.PTR(uuid.MustParse(testdata.FakeUUID)),
-					Language:           testdata.PTR(enum.LanguageUA),
-					WarehouseId:        testdata.PTR(types.IntString(151)),
-					Limit:              testdata.PTR(50),
-					Page:               testdata.PTR(1),
-				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetWarehousesResponse{{
-					SiteKey:                     105,
-					Description:                 "Відділення №1: вул. Пирогівський шлях, 135",
-					DescriptionRu:               "Отделение №1: ул. Пироговский путь, 135",
-					ShortAddress:                "Київ, Пирогівський шлях, 135",
-					ShortAddressRu:              "Киев, Пироговский путь, 135",
-					Phone:                       "380800500609",
-					TypeOfWarehouse:             uuid.MustParse("9a68df70-0267-42a8-bb5c-37f427e36ee4"),
-					Ref:                         uuid.MustParse("1ec09d88-e1c2-11e3-8c4a-0050568002cf"),
-					Number:                      types.IntString(1),
-					CityRef:                     uuid.MustParse("8d5a980d-391c-11dd-90d9-001a92567626"),
-					CityDescription:             "Київ",
-					CityDescriptionRu:           "Киев",
-					SettlementRef:               uuid.MustParse("e718a680-4b33-11e4-ab6d-005056801329"),
-					SettlementDescription:       "Київ",
-					SettlementAreaDescription:   "Київська",
-					SettlementTypeDescription:   "місто",
-					SettlementTypeDescriptionRu: "город",
-					Longitude:                   types.FloatString(30.542884000000000),
-					Latitude:                    types.FloatString(50.354786000000000),
-					PostFinance:                 true,
-					BicycleParking:              true,
-					PaymentAccess:               true,
-					POSTerminal:                 true,
-					InternationalShipping:       true,
-					SelfServiceWorkplacesCount:  true,
-					PlaceMaxWeightAllowed:       types.IntString(1100),
-					SendingLimitationsOnDimensions: Dimensions{
-						Width:  170,
-						Height: 220,
-						Length: 600,
+		"SaveReturnDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveReturn(SaveReturnReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+						Note:          utils.PTR("Произвольное описание"),
 					},
-					ReceivingLimitationsOnDimensions: Dimensions{
-						Width:  170,
-						Height: 220,
-						Length: 600,
-					},
-					Reception: DayHours{
-						Monday:    "08:00-21:00",
-						Tuesday:   "08:00-21:00",
-						Wednesday: "08:00-21:00",
-						Thursday:  "08:00-21:00",
-						Friday:    "08:00-21:00",
-						Saturday:  "09:00-18:00",
-						Sunday:    "09:00-18:00",
-					},
-					Delivery: DayHours{
-						Monday:    "08:00-21:00",
-						Tuesday:   "08:00-21:00",
-						Wednesday: "08:00-21:00",
-						Thursday:  "08:00-21:00",
-						Friday:    "08:00-21:00",
-						Saturday:  "09:00-18:00",
-						Sunday:    "09:00-18:00",
-					},
-					Schedule: DayHours{
-						Monday:    "08:00-21:00",
-						Tuesday:   "08:00-21:00",
-						Wednesday: "08:00-21:00",
-						Thursday:  "08:00-21:00",
-						Friday:    "08:00-21:00",
-						Saturday:  "09:00-18:00",
-						Sunday:    "09:00-18:00",
-					},
-					DistrictCode:        "в1",
-					WarehouseStatus:     "Working",
-					WarehouseStatusDate: "2022-03-22 00:00:00",
-					CategoryOfWarehouse: "Branch",
-					RegionCity:          "КИЇВ ЗАХІД ПОСИЛКОВИЙ",
-					GeneratorEnabled:    true,
-					CanGetMoneyTransfer: true,
-					WarehouseIndex:      "11/1",
-				}}, res)
-			},
-			expectErr: nil,
-		},
-		{
-			name:   "GetWarehouseTypesDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.GetWarehouseTypes()
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetWarehouseTypesResponse{{
-					Ref:           uuid.MustParse("6f8c7162-4b72-4b0a-88e5-906948c6a92f"),
-					Description:   "Parcel Shop",
-					DescriptionRu: "Parcel Shop",
-				}, {
-					Ref:           uuid.MustParse("841339c7-591a-42e2-8233-7a0a00f0ed6f"),
-					Description:   "Поштове відділення",
-					DescriptionRu: "Почтовое отделение",
-				}}, res)
-			},
-			expectErr: nil,
-		},
-		{
-			name:   "GetStreetDefault",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.GetStreet(GetStreetRequest{
-					CityRef:      uuid.MustParse(testdata.FakeUUID),
-					FindByString: testdata.PTR("Київ"),
-					Limit:        testdata.PTR(50),
-					Page:         testdata.PTR(1),
+					ReturnAddressRef: types.UUID(uuid.MustParse("e4d6be4e-182a-43b2-884a-1904fb8d0101")),
 				})
-			},
-			resCallback: func(res any) {
-				assert.Equal(t, GetStreetResponse{{
-					Ref:            uuid.MustParse("ef905acd-e1f4-11e5-899e-005056887b8d"),
-					Description:    "1-а Вишнева",
-					StreetsTypeRef: "Street",
-					StreetsType:    "вул.",
-				}, {
-					Ref:            uuid.MustParse("0c2b2d0a-650a-11e6-a9f2-005056887b8d"),
-					Description:    "1-а Дамбова",
-					StreetsTypeRef: "Street",
-					StreetsType:    "вул.",
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Number: "102-00006096",
+					Ref:    types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
 				}}, res)
-			},
-			expectErr: nil,
+			}),
 		},
-		{
-			name:   "GetStreetError",
-			format: testdata.FormatJSON,
-			reqCallback: func(m Model) (any, error) {
-				return m.SearchSettlementStreets(SearchSettlementStreetsRequest{
-					StreetName:    "Хрещатик",
-					SettlementRef: uuid.MustParse(testdata.FakeUUID),
-					Limit:         testdata.PTR(10),
+		"SaveReturnError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveReturn(SaveReturnReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+					},
+					ReturnAddressRef: types.UUID(uuid.MustParse("e4d6be4e-182a-43b2-884a-1904fb8d0101")),
 				})
-			},
-			resCallback: nil,
-			expectErr:   errors.New("CityRef is not specified"),
+			}),
+			testdata.WithExpectErr[Model](errors.New("IntDocNumber is incorrect")),
+		},
+		"SaveReturnNewAddressDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveReturnNewAddress(SaveReturnNewAddressReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+						Note:          utils.PTR("Произвольное описание"),
+					},
+					RecipientSettlement:       types.UUID(uuid.MustParse("6cab2460-c949-4a72-be53-394dfae0535d")),
+					RecipientSettlementStreet: types.UUID(uuid.MustParse("6dbdc6dc-a16b-4335-bf36-6a111fd5b922")),
+					BuildingNumber:            "4",
+					NoteAddressRecipient:      "2",
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Number: "102-00006096",
+					Ref:    types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+				}}, res)
+			}),
+		},
+		"SaveReturnNewAddressError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveReturnNewAddress(SaveReturnNewAddressReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+					},
+					RecipientSettlement:       types.UUID(uuid.MustParse("6cab2460-c949-4a72-be53-394dfae0535d")),
+					RecipientSettlementStreet: types.UUID(uuid.MustParse("6dbdc6dc-a16b-4335-bf36-6a111fd5b922")),
+					BuildingNumber:            "4",
+					NoteAddressRecipient:      "2",
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("IntDocNumber is incorrect")),
+		},
+		"SaveReturnNewWarehouseDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveReturnNewWarehouse(SaveReturnNewWarehouseReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+						Note:          utils.PTR("Произвольное описание"),
+					},
+					RecipientWarehouse: types.UUID(uuid.MustParse("6cab2460-c949-4a72-be53-394dfae0535d")),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Number: "102-00006096",
+					Ref:    types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+				}}, res)
+			}),
+		},
+		"SaveReturnNewWarehouseError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveReturnNewWarehouse(SaveReturnNewWarehouseReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+					},
+					RecipientWarehouse: types.UUID(uuid.MustParse("6cab2460-c949-4a72-be53-394dfae0535d")),
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("IntDocNumber is incorrect")),
+		},
+		"SaveRedirectingDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveRedirecting(SaveRedirectingReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+						Note:          utils.PTR("Произвольное описание"),
+					},
+					Recipient:                 types.UUID(uuid.MustParse("6dbdc6dc-a16b-4335-bf36-6a111fd5b922")),
+					RecipientContactName:      "Іванов Іван Іванович",
+					RecipientPhone:            "380685024447",
+					PayerType:                 enum.PayerTypeRecipient,
+					Customer:                  "Sender",
+					ServiceType:               enum.ServiceTypeWarehouseWarehouse,
+					RecipientSettlement:       types.UUID(uuid.MustParse("265c18a5-aacd-4141-8cc0-9e425f8b2d90")),
+					RecipientSettlementStreet: types.UUID(uuid.MustParse("7665f753-5ba7-42af-a769-631a276663f9")),
+					BuildingNumber:            "15",
+					NoteAddressRecipient:      "Щось від свого імені",
+					RecipientWarehouse:        types.UUID(uuid.MustParse("6cab2460-c949-4a72-be53-394dfae0535d")),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Number: "102-00006096",
+					Ref:    types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+				}}, res)
+			}),
+		},
+		"SaveRedirectingError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveRedirecting(SaveRedirectingReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+					},
+					Recipient:                 types.UUID(uuid.MustParse("6dbdc6dc-a16b-4335-bf36-6a111fd5b922")),
+					RecipientContactName:      "Іванов Іван Іванович",
+					RecipientPhone:            "380685024447",
+					PayerType:                 enum.PayerTypeRecipient,
+					Customer:                  "Sender",
+					ServiceType:               enum.ServiceTypeWarehouseWarehouse,
+					RecipientSettlement:       types.UUID(uuid.MustParse("265c18a5-aacd-4141-8cc0-9e425f8b2d90")),
+					RecipientSettlementStreet: types.UUID(uuid.MustParse("7665f753-5ba7-42af-a769-631a276663f9")),
+					BuildingNumber:            "15",
+					NoteAddressRecipient:      "Щось від свого імені",
+					RecipientWarehouse:        types.UUID(uuid.MustParse("6cab2460-c949-4a72-be53-394dfae0535d")),
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("IntDocNumber is incorrect")),
+		},
+		"SaveChangeEWDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveChangeEW(SaveChangeEWReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+						Note:          utils.PTR("Произвольное описание"),
+					},
+					SenderContactName:    "Горбунко Остап Федорович",
+					SenderPhone:          "380685024447",
+					Recipient:            types.UUID(uuid.MustParse("6dbdc6dc-a16b-4335-bf36-6a111fd5b922")),
+					RecipientContactName: "Іванов Іван Іванович",
+					RecipientPhone:       "380685024447",
+					PayerType:            enum.PayerTypeRecipient,
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, SaveRes{{
+					Number: "102-00006096",
+					Ref:    types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+				}}, res)
+			}),
+		},
+		"SaveChangeEWError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.SaveChangeEW(SaveChangeEWReq{
+					SaveReq: SaveReq{
+						IntDocNumber:  "206004560074695",
+						PaymentMethod: enum.PaymentMethodCash,
+						Reason:        types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+						SubtypeReason: types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97")),
+						OrderType:     enum.OrderTypeCargoReturn,
+					},
+					SenderContactName:    "Горбунко Остап Федорович",
+					SenderPhone:          "380685024447",
+					Recipient:            types.UUID(uuid.MustParse("6dbdc6dc-a16b-4335-bf36-6a111fd5b922")),
+					RecipientContactName: "Іванов Іван Іванович",
+					RecipientPhone:       "380685024447",
+					PayerType:            enum.PayerTypeRecipient,
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("IntDocNumber is incorrect")),
+		},
+		"DeleteDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, DeleteRes{{
+					Number: "102-00006096",
+				}}, res)
+			}),
+		},
+		"DeleteError": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.Delete(DeleteReq{
+					Ref: types.UUID(uuid.MustParse("40a185f3-c6f3-4017-9c2a-2b9adb2e23ec")),
+				})
+			}),
+			testdata.WithExpectErr[Model](errors.New("Ref not found")),
+		},
+		"GetReturnOrdersListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetReturnOrdersList(GetOrdersListReq{
+					Number:    utils.PTR("102-00003168"),
+					Ref:       utils.PTR(types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97"))),
+					BeginDate: utils.PTR(types.MustParseSlashDateHourMinute("12/10/15 10:33")),
+					EndDate:   utils.PTR(types.MustParseSlashDateHourMinute("12/10/16 10:33")),
+					Page:      utils.PTR(2),
+					Limit:     utils.PTR(50),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetOrdersListRes{{
+					OrderRef:               types.UUID(uuid.MustParse("7cff4889-b15f-4464-a45f-ce10e7478a63")),
+					OrderNumber:            "102-00003168",
+					OrderStatus:            "Прийняте",
+					DocumentNumber:         "20600000043015",
+					CounterpartyRecipient:  "Комунальник",
+					ContactPersonRecipient: "Іванов Іван Іванович",
+					AddressRecipient:       "Ангеліної Паші вул. 45 кв. 12",
+					DeliveryCost:           types.FloatString(20),
+					EstimatedDeliveryDate:  types.MustParseSlashDateHourMinute("12/10/15 10:33"),
+					ExpressWaybillNumber:   "59000042651620",
+					ExpressWaybillStatus:   "Відправлення у місті Київ",
+				}}, res)
+			}),
+		},
+		"GetReturnOrdersListEmpty": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetReturnOrdersList(GetOrdersListReq{})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetOrdersListRes{}, res)
+			}),
+		},
+		"GetChangeEWOrdersListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetChangeEWOrdersList(GetOrdersListReq{
+					Number:    utils.PTR("102-00003168"),
+					Ref:       utils.PTR(types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97"))),
+					BeginDate: utils.PTR(types.MustParseSlashDateHourMinute("12/10/15 10:33")),
+					EndDate:   utils.PTR(types.MustParseSlashDateHourMinute("12/10/16 10:33")),
+					Page:      utils.PTR(2),
+					Limit:     utils.PTR(50),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetOrdersListRes{{
+					OrderRef:               types.UUID(uuid.MustParse("7cff4889-b15f-4464-a45f-ce10e7478a63")),
+					OrderNumber:            "102-00003168",
+					OrderStatus:            "Прийняте",
+					DocumentNumber:         "20600000043015",
+					CounterpartyRecipient:  "Комунальник",
+					ContactPersonRecipient: "Іванов Іван Іванович",
+					AddressRecipient:       "Ангеліної Паші вул. 45 кв. 12",
+					DeliveryCost:           types.FloatString(20),
+					EstimatedDeliveryDate:  types.MustParseSlashDateHourMinute("12/10/15 10:33"),
+					ExpressWaybillNumber:   "59000042651620",
+					ExpressWaybillStatus:   "Відправлення у місті Київ",
+				}}, res)
+			}),
+		},
+		"GetChangeEWOrdersListEmpty": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetChangeEWOrdersList(GetOrdersListReq{})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetOrdersListRes{}, res)
+			}),
+		},
+		"GetRedirectionOrdersListDefault": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetRedirectionOrdersList(GetOrdersListReq{
+					Number:    utils.PTR("102-00003168"),
+					Ref:       utils.PTR(types.UUID(uuid.MustParse("a2cdd416-e32a-425d-9055-69f2f1c33a97"))),
+					BeginDate: utils.PTR(types.MustParseSlashDateHourMinute("12/10/15 10:33")),
+					EndDate:   utils.PTR(types.MustParseSlashDateHourMinute("12/10/16 10:33")),
+					Page:      utils.PTR(2),
+					Limit:     utils.PTR(50),
+				})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetOrdersListRes{{
+					OrderRef:               types.UUID(uuid.MustParse("7cff4889-b15f-4464-a45f-ce10e7478a63")),
+					OrderNumber:            "102-00003168",
+					OrderStatus:            "Прийняте",
+					DocumentNumber:         "20600000043015",
+					CounterpartyRecipient:  "Комунальник",
+					ContactPersonRecipient: "Іванов Іван Іванович",
+					AddressRecipient:       "Ангеліної Паші вул. 45 кв. 12",
+					DeliveryCost:           types.FloatString(20),
+					EstimatedDeliveryDate:  types.MustParseSlashDateHourMinute("12/10/15 10:33"),
+					ExpressWaybillNumber:   "59000042651620",
+					ExpressWaybillStatus:   "Відправлення у місті Київ",
+				}}, res)
+			}),
+		},
+		"GetRedirectionOrdersListEmpty": {
+			testdata.WithReqCallback[Model](func(m Model) (any, error) {
+				return m.GetRedirectionOrdersList(GetOrdersListReq{})
+			}),
+			testdata.WithResCallback[Model](func(res any) {
+				assert.Equal(t, GetOrdersListRes{}, res)
+			}),
 		},
 	}
 
-	for _, tc := range testCases {
-		stubFileName := fmt.Sprintf("%s.%s", tc.name, tc.format)
+	for name, tc := range testCases {
+		testDataPath, err := filepath.Abs("./testdata")
 
-		mockBasePath := "./testdata"
-		reqPath := fmt.Sprintf("%s/request/%s", mockBasePath, stubFileName)
-
-		var reqBody []byte
-		if _, err := os.Stat(reqPath); err == nil {
-			reqBody, err = os.ReadFile(reqPath)
-			require.NoError(t, err)
-		}
-
-		resPath := fmt.Sprintf("%s/response/%s", mockBasePath, stubFileName)
-
-		var resBody []byte
-		_, err := os.Stat(resPath)
-		require.NoError(t, err)
-		resBody, err = os.ReadFile(resPath)
 		require.NoError(t, err)
 
-		testCase := testdata.ApiTestCase[Model]{
-			Name:           tc.name,
-			ReqBody:        reqBody,
-			ReqCallback:    tc.reqCallback,
-			ResBody:        resBody,
-			ResCallback:    tc.resCallback,
-			ExpectErr:      tc.expectErr,
-			HttpStatusCode: http.StatusOK,
-		}
+		tc = append(tc, testdata.WithTestDataPath[Model](testDataPath))
 
-		c := NewModel(adapter.NewAdapter(adapter.NewConfig(
-			testdata.FakeApiKey,
-			adapter.WithHTTPClient(testdata.CreateFakeHTTPClient(t, testCase)),
-			adapter.WithFormat(adapter.FormatJSON),
-			adapter.WithDebug(true),
-		)))
-
-		testdata.RunApiTestCase(t, testCase, c)
+		tc.Run(t, name, func(adp adapter.RequestAdapter) Model {
+			return NewModel(adp)
+		})
 	}
-}
-
-type apiTestCase struct {
-	name   string
-	format testdata.Format
-
-	reqCallback func(m Model) (any, error)
-	resCallback func(res any)
-
-	expectErr error
 }

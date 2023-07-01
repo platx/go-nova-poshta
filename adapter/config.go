@@ -8,9 +8,10 @@ type Config struct {
 	HTTPClient HTTPClient
 	Format     Format
 	ApiKey     string
+	Debug      bool
 }
 
-func CreateConfig(apiKey string, opts ...Option) Config {
+func NewConfig(apiKey string, opts ...Option) Config {
 	if apiKey == "" {
 		panic("api key is required")
 	}
@@ -18,9 +19,8 @@ func CreateConfig(apiKey string, opts ...Option) Config {
 	c := Config{
 		HTTPClient: http.DefaultClient,
 		Format:     FormatJSON,
+		ApiKey:     apiKey,
 	}
-
-	WithApiKey(apiKey)(&c)
 
 	for _, opt := range opts {
 		opt(&c)
@@ -43,8 +43,8 @@ func WithFormat(v Format) Option {
 	}
 }
 
-func WithApiKey(v string) Option {
+func WithDebug(v bool) Option {
 	return func(c *Config) {
-		c.ApiKey = v
+		c.Debug = v
 	}
 }

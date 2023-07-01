@@ -1,1 +1,13 @@
-{"apiKey":"fake-token","modelName":"ContactPerson","calledMethod":"update","methodProperties":{"Ref":"00000000-0000-0000-0000-000000000000","CounterpartyRef":"00000000-0000-0000-0000-000000000000","FirstName":"Иван","LastName":"Иванов","MiddleName":"Иванович","Phone":"380997979781"}}
+{
+  "apiKey": "fake-token",
+  "modelName": "ContactPerson",
+  "calledMethod": "update",
+  "methodProperties": {
+    "Ref": "00000000-0000-0000-0000-000000000000",
+    "CounterpartyRef": "031a466a-de28-11ed-a60f-48df37b921db",
+    "FirstName": "Иван",
+    "LastName": "Иванов",
+    "MiddleName": "Иванович",
+    "Phone": "380997979781"
+  }
+}

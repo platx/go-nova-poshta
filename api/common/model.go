@@ -1,120 +1,117 @@
 package common
 
-type Api interface {
+import (
+	"github.com/platx/go-nova-poshta/api"
+	"github.com/platx/go-nova-poshta/custom/enum"
+)
+
+type Model interface {
+	api.Model
+
 	// GetTimeIntervals https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a56d5c1c-8512-11ec-8ced-005056b2dbe1
-	GetTimeIntervals(GetTimeIntervalsFilter) (GetTimeIntervalsResult, error)
+	GetTimeIntervals(GetTimeIntervalsReq) (GetTimeIntervalsRes, error)
 
 	// GetCargoTypes https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a5912a1e-8512-11ec-8ced-005056b2dbe1
-	GetCargoTypes() (ListItemsResult, error)
+	GetCargoTypes() (ListItemsRes[enum.CargoType], error)
 
 	// GetBackwardDeliveryCargoTypes https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a5b46873-8512-11ec-8ced-005056b2dbe1
-	GetBackwardDeliveryCargoTypes() (ListItemsResult, error)
+	GetBackwardDeliveryCargoTypes() (ListItemsRes[enum.CargoType], error)
 
 	// GetPalletsList https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a5dd575e-8512-11ec-8ced-005056b2dbe1
-	GetPalletsList() (GetPalletsListResult, error)
+	GetPalletsList() (GetPalletsListRes, error)
 
 	// GetTypesOfPayersForRedelivery https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a6247f2f-8512-11ec-8ced-005056b2dbe1
-	GetTypesOfPayersForRedelivery() (ListItemsResult, error)
+	GetTypesOfPayersForRedelivery() (ListItemsRes[string], error)
 
 	// GetPackList https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a6492db4-8512-11ec-8ced-005056b2dbe1
-	GetPackList() (GetPackListResult, error)
+	GetPackList() (GetPackListRes, error)
 
 	// GetTiresWheelsList https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a66fada0-8512-11ec-8ced-005056b2dbe1
-	GetTiresWheelsList() (GetTiresWheelsListResult, error)
+	GetTiresWheelsList() (GetTiresWheelsListRes, error)
 
 	// GetCargoDescriptionList https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a697db47-8512-11ec-8ced-005056b2dbe1
-	GetCargoDescriptionList() (GetCargoDescriptionListResult, error)
+	GetCargoDescriptionList() (GetCargoDescriptionListRes, error)
 
 	// GetMessageCodeText https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a6bce5a1-8512-11ec-8ced-005056b2dbe1
-	GetMessageCodeText() (GetMessageCodeTextResult, error)
+	GetMessageCodeText() (GetMessageCodeTextRes, error)
 
 	// GetServiceTypes https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a6e189f7-8512-11ec-8ced-005056b2dbe1
-	GetServiceTypes() (ListItemsResult, error)
+	GetServiceTypes() (ListItemsRes[enum.ServiceType], error)
 
 	// GetOwnershipFormsList https://developers.novaposhta.ua/view/model/a55b2c64-8512-11ec-8ced-005056b2dbe1/method/a754ff0d-8512-11ec-8ced-005056b2dbe1
-	GetOwnershipFormsList() (GetOwnershipFormsListResult, error)
+	GetOwnershipFormsList() (GetOwnershipFormsListRes, error)
 }
 
-const modelName = "Common"
-
-type client interface {
-	Call(model string, method string, props any, res any) error
+type model struct {
+	api.Model
 }
 
-type api struct {
-	client
+func NewModel(client api.Client) Model {
+	return &model{api.NewModel(client, "Common")}
 }
 
-func NewApi(client client) Api {
-	return &api{client: client}
+func (m *model) GetTimeIntervals(req GetTimeIntervalsReq) (GetTimeIntervalsRes, error) {
+	var res GetTimeIntervalsRes
+
+	return res, m.Call("getTimeIntervals", req, &res)
 }
 
-func (c *api) call(method string, props any, res any) error {
-	return c.Call(modelName, method, props, res)
+func (m *model) GetCargoTypes() (ListItemsRes[enum.CargoType], error) {
+	var res ListItemsRes[enum.CargoType]
+
+	return res, m.Call("getCargoTypes", nil, &res)
 }
 
-func (c *api) GetTimeIntervals(props GetTimeIntervalsFilter) (GetTimeIntervalsResult, error) {
-	var res GetTimeIntervalsResult
+func (m *model) GetBackwardDeliveryCargoTypes() (ListItemsRes[enum.CargoType], error) {
+	var res ListItemsRes[enum.CargoType]
 
-	return res, c.call("getTimeIntervals", props, &res)
+	return res, m.Call("getBackwardDeliveryCargoTypes", nil, &res)
 }
 
-func (c *api) GetCargoTypes() (ListItemsResult, error) {
-	var res ListItemsResult
+func (m *model) GetPalletsList() (GetPalletsListRes, error) {
+	var res GetPalletsListRes
 
-	return res, c.call("getCargoTypes", nil, &res)
+	return res, m.Call("getPalletsList", nil, &res)
 }
 
-func (c *api) GetBackwardDeliveryCargoTypes() (ListItemsResult, error) {
-	var res ListItemsResult
+func (m *model) GetTypesOfPayersForRedelivery() (ListItemsRes[string], error) {
+	var res ListItemsRes[string]
 
-	return res, c.call("getBackwardDeliveryCargoTypes", nil, &res)
+	return res, m.Call("getTypesOfPayersForRedelivery", nil, &res)
 }
 
-func (c *api) GetPalletsList() (GetPalletsListResult, error) {
-	var res GetPalletsListResult
+func (m *model) GetPackList() (GetPackListRes, error) {
+	var res GetPackListRes
 
-	return res, c.call("getPalletsList", nil, &res)
+	return res, m.Call("getPackList", nil, &res)
 }
 
-func (c *api) GetTypesOfPayersForRedelivery() (ListItemsResult, error) {
-	var res ListItemsResult
+func (m *model) GetTiresWheelsList() (GetTiresWheelsListRes, error) {
+	var res GetTiresWheelsListRes
 
-	return res, c.call("getTypesOfPayersForRedelivery", nil, &res)
+	return res, m.Call("getTiresWheelsList", nil, &res)
 }
 
-func (c *api) GetPackList() (GetPackListResult, error) {
-	var res GetPackListResult
+func (m *model) GetCargoDescriptionList() (GetCargoDescriptionListRes, error) {
+	var res GetCargoDescriptionListRes
 
-	return res, c.call("getPackList", nil, &res)
+	return res, m.Call("getCargoDescriptionList", nil, &res)
 }
 
-func (c *api) GetTiresWheelsList() (GetTiresWheelsListResult, error) {
-	var res GetTiresWheelsListResult
+func (m *model) GetMessageCodeText() (GetMessageCodeTextRes, error) {
+	var res GetMessageCodeTextRes
 
-	return res, c.call("getTiresWheelsList", nil, &res)
+	return res, m.Call("getMessageCodeText", nil, &res)
 }
 
-func (c *api) GetCargoDescriptionList() (GetCargoDescriptionListResult, error) {
-	var res GetCargoDescriptionListResult
+func (m *model) GetServiceTypes() (ListItemsRes[enum.ServiceType], error) {
+	var res ListItemsRes[enum.ServiceType]
 
-	return res, c.call("getCargoDescriptionList", nil, &res)
+	return res, m.Call("getServiceTypes", nil, &res)
 }
 
-func (c *api) GetMessageCodeText() (GetMessageCodeTextResult, error) {
-	var res GetMessageCodeTextResult
+func (m *model) GetOwnershipFormsList() (GetOwnershipFormsListRes, error) {
+	var res GetOwnershipFormsListRes
 
-	return res, c.call("getMessageCodeText", nil, &res)
-}
-
-func (c *api) GetServiceTypes() (ListItemsResult, error) {
-	var res ListItemsResult
-
-	return res, c.call("getServiceTypes", nil, &res)
-}
-
-func (c *api) GetOwnershipFormsList() (GetOwnershipFormsListResult, error) {
-	var res GetOwnershipFormsListResult
-
-	return res, c.call("getOwnershipFormsList", nil, &res)
+	return res, m.Call("getOwnershipFormsList", nil, &res)
 }
