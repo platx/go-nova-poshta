@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "339f0b8d-da35-11ed-a60f-48df37b921db",
+      "Description": "1-а Вишнева вул. 7 кв. 2 Комментарий"
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "Building already exists"
+  ],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [
+    "30000500679"
+  ],
+  "infoCodes": []
+}

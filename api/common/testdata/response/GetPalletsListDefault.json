@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "627b0c23-d110-11dd-8c0d-001d92f78697",
+      "Description": "Палета від 1,5 м2 до 2 м2 (816)",
+      "DescriptionRu": "Паллета от 1,5 м2 до 2 м2",
+      "Weight": "816.00"
+    },
+    {
+      "Ref": "627b0c24-d110-11dd-8c0d-001d92f78697",
+      "Description": "Палета від 1 м2 до 1,49 м2 (612)",
+      "DescriptionRu": "Паллета от 1 м2 до 1,49 м2",
+      "Weight": "612.00"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

@@ -1,0 +1,12 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "InternetDocument",
+  "calledMethod": "getDocumentList",
+  "methodProperties": {
+    "DateTimeFrom": "01.01.2019",
+    "DateTimeTo": "03.01.2019",
+    "GetFullList": 1,
+    "DateTime": "02.01.2019",
+    "Page": 1
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "save",
+  "methodProperties": {
+    "CounterpartyRef": "59498e99-f28c-4f0f-bff3-d77fe76d0bf2",
+    "StreetRef": "23493a78-b494-44ac-a955-c1a5373880fe",
+    "BuildingNumber": "7",
+    "Flat": "2",
+    "Note": null
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "0446498a-7814-4a70-b262-f35c9c51cd85",
+      "Description": "Гофрокартон 3-шаровий",
+      "DescriptionRu": "Гофрокартон 3-слойный",
+      "Length": "1000.0",
+      "Width": "1000.0",
+      "Height": "0.0",
+      "VolumetricWeight": "0.00",
+      "TypeOfPacking": "",
+      "PackagingForPlace": "0"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

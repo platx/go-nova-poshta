@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "20f7b625-9add-11e3-b441-0050568002cf",
+      "Description": "Шина вантажна R 22,5",
+      "DescriptionRu": "Шина грузовая R 22,5",
+      "Weight": "94.00",
+      "DescriptionType": "Tires"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

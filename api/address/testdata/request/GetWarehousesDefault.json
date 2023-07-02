@@ -1,0 +1,14 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "getWarehouses",
+  "methodProperties": {
+    "CityName": "Київ",
+    "CityRef": "71508129-9b87-11de-822f-000c2965ae0e",
+    "TypeOfWarehouseRef": "db5c88de-391c-11dd-90d9-001a92567626",
+    "Language": "UA",
+    "WarehouseId": "151",
+    "Limit": 50,
+    "Page": 1
+  }
+}

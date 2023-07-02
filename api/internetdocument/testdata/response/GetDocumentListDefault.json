@@ -1,0 +1,35 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "157bb4f4-09e5-4bfb-8d3f-603661fb36b2",
+      "DateTime": "01.01.2019",
+      "PreferredDeliveryDate": "02.01.2019",
+      "RecipientDateTime": "03.01.2019",
+      "EWDateCreated": "04.01.2019",
+      "Weight": "5",
+      "SeatsAmount": "2",
+      "IntDocNumber": "20400030200931",
+      "Cost": "15000",
+      "CitySender": "c92a8f8a-2f58-4f13-9d74-d271872f3658",
+      "CityRecipient": "b2ae9819-8fef-4a02-a1d6-2a65e5cdcaac",
+      "SenderAddress": "52353e10-16ec-4723-ac45-6a0842e30582",
+      "RecipientAddress": "fac557b3-8440-4e11-8eee-93360450b1d9",
+      "CostOnSite": "45",
+      "PayerType": "Sender",
+      "PaymentMethod": "Cash",
+      "AfterpaymentOnGoodsCost": "500",
+      "PackingNumber": "123456",
+      "RejectionReason": "Опис причини переадресування",
+      "StateId": "41",
+      "StateName": "Відправлення в місті Києві"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

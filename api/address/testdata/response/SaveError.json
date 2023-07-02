@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "StreetRef is not specified"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20000500639"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

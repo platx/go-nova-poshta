@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "data": [{
+    "date": "2019.01.02 12:13:14",
+    "timezone_type": "3",
+    "timezone": "Europe/Kiev"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

@@ -1,0 +1,12 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "ContactPerson",
+  "calledMethod": "save",
+  "methodProperties": {
+    "CounterpartyRef": "031a466a-de28-11ed-a60f-48df37b921db",
+    "FirstName": "Иван",
+    "LastName": "Иванов",
+    "MiddleName": "Иванович",
+    "Phone": "380997979781"
+  }
+}

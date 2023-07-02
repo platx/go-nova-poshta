@@ -1,0 +1,30 @@
+{
+  "success": false,
+  "data": [
+    {
+      "Ref": "",
+      "Number": "",
+      "Date": "",
+      "Description": "",
+      "Errors": [],
+      "Success": [],
+      "Warnings": [],
+      "Data": {
+        "Errors": [],
+        "Success": [],
+        "Warnings": []
+      }
+    }
+  ],
+  "errors": [
+    "Реєстр не знайдений"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "ERR_0001"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

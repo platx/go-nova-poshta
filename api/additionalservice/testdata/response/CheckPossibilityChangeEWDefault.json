@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "data": [{
+    "CanChangeSender" : true,
+    "CanChangeRecipient" : true,
+    "CanChangePayerTypeOrPaymentMethod" : true,
+    "CanChangeBackwardDeliveryDocuments" : true,
+    "CanChangeBackwardDeliveryMoney" : true,
+    "CanChangeCash2Card" : true,
+    "CanChangeBackwardDeliveryOther" : true,
+    "CanChangeAfterpaymentType" : true,
+    "CanChangeLiftingOnFloor" : true,
+    "CanChangeLiftingOnFloorWithElevator" : true,
+    "CanChangeFillingWarranty" : true,
+    "SenderCounterparty" : "ПП ВКФ \"КАРАТ\"",
+    "ContactPersonSender" : "Іванов Іван Іванович",
+    "SenderPhone" : "380685024447",
+    "RecipientCounterparty" : "Приватна особа",
+    "ContactPersonRecipient" : "Іванов Іван Іванович",
+    "RecipientPhone" : "380685024447",
+    "PayerType" : "Recipient",
+    "PaymentMethod" : "Cash"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

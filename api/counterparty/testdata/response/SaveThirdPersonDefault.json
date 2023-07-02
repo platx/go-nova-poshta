@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "32c445a1-dec8-11ed-a60f-48df37b921db",
+      "Description": "DeFacto",
+      "FirstName": "DeFacto",
+      "MiddleName": "",
+      "LastName": "",
+      "Counterparty": "e9de5dd9-8646-ea11-80f9-005056b29404",
+      "OwnershipForm": "7f0f351d-2519-11df-be9a-000c291af1b3",
+      "OwnershipFormDescription": "ТОВ",
+      "EDRPOU": "12345678",
+      "CounterpartyType": "Organization",
+      "ContactPerson": {
+        "success": true,
+        "data": [],
+        "errors": [],
+        "translatedErrors": [],
+        "warnings": [],
+        "info": {
+          "totalCount": 0
+        },
+        "messageCodes": [],
+        "errorCodes": [],
+        "warningCodes": [],
+        "infoCodes": []
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": {
+    "DuplicateValidate": "Counterparty is not unique"
+  },
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": {
+    "DuplicateValidate": "30000900779"
+  },
+  "infoCodes": []
+}

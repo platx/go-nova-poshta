@@ -1,0 +1,11 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "getStreet",
+  "methodProperties": {
+    "CityRef": "ef905acd-e1f4-11e5-899e-005056887b8d",
+    "FindByString": "Київ",
+    "Limit": 50,
+    "Page": 1
+  }
+}

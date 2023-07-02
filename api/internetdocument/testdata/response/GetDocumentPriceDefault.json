@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "data": [{
+    "AssessedCost": "300",
+    "Cost": "45",
+    "CostRedelivery": "100",
+    "TZoneInfo": {
+      "TzoneName": "Тарифназона:Тарифназона4",
+      "TzoneID": "4"
+    },
+    "CostPack": "4"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

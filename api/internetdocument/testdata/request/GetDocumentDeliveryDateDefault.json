@@ -1,0 +1,11 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "InternetDocument",
+  "calledMethod": "getDocumentDeliveryDate",
+  "methodProperties": {
+    "DateTime": "01.01.2019",
+    "ServiceType": "WarehouseWarehouse",
+    "CitySender": "c92a8f8a-2f58-4f13-9d74-d271872f3658",
+    "CityRecipient": "fa61ec3f-70c8-409f-b614-fc2b34a53c8e"
+  }
+}

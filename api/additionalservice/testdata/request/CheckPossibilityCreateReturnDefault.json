@@ -1,0 +1,8 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "AdditionalService",
+  "calledMethod": "CheckPossibilityCreateReturn",
+  "methodProperties": {
+    "Number": "20450520287825"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "data": [{
+    "Ref" : "12d83dfa-7084-4b11-8dac-432b98678bc4",
+    "Number" : "20600000065609",
+    "PayerType" : "Sender",
+    "PaymentMethod" : "Cash",
+    "WarehouseRef" : "1989c63e-f5a8-4da0-a3c0-ed7e82441eae",
+    "WarehouseDescription" : "Відділення №23 (до 30 кг): просп. М. Бажана, 24/1 (м. Позняки)",
+    "AddressDescription" : "просп. М. Бажана, 24/1 (м. Позняки)",
+    "StreetDescription" : "просп. М. Бажана, 24/1 (м. Позняки)",
+    "BuildingNumber" : "24-Jan",
+    "CityRecipient" : "c29556ef-06bb-4c65-933a-396877a54f82",
+    "CityRecipientDescription" : "Київ",
+    "SettlementRecipient" : "eed2ac1a-8a7b-42db-8131-10b5cd8d7db4",
+    "SettlementRecipientDescription" : "Київ",
+    "SettlementType" : "cc5fe59a-a8af-480b-b3d5-26b066d2617a",
+    "CounterpartyRecipientRef" : "ad08451f-8748-41b6-ac55-41fa59d2bac1",
+    "CounterpartyRecipientDescription" : "101-10378782",
+    "RecipientName" : "Іванов Іван Іванович",
+    "PhoneSender" : "380675387254",
+    "PhoneRecipient" : "380991234567",
+    "DocumentWeight" : "1"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

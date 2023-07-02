@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "data": [{
+    "Ref" : "0679cdb5-898e-11ea-a970-b8830365ade4",
+    "Description" : "Автоповернення",
+    "ReasonRef" : "49754eb2-a9e1-11e3-9fa0-0050568002cf"
+  }],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

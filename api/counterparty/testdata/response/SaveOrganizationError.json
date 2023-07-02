@@ -1,0 +1,16 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "EDRPOU can't be empty for Organization",
+    "CompanyName is not specified"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": {
+    "1": "20000900759"
+  },
+  "warningCodes": [],
+  "infoCodes": []
+}

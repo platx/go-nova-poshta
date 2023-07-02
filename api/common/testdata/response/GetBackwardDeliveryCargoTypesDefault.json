@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Description": "Документи",
+      "Ref": "Documents"
+    },
+    {
+      "Description": "Грошовий переказ",
+      "Ref": "Money"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

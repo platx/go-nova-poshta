@@ -1,0 +1,28 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "InternetDocument",
+  "calledMethod": "update",
+  "methodProperties": {
+    "Ref": "7142a918-c954-43c9-b985-a8df96ec922f",
+    "PayerType": "ThirdPerson",
+    "PaymentMethod": "NonCash",
+    "DateTime": "01.01.2019",
+    "CargoType": "Cargo",
+    "VolumeGeneral": 0.45,
+    "Weight": 0.5,
+    "ServiceType": "DoorsWarehouse",
+    "SeatsAmount": 2,
+    "Description": "Додатковий опис відправлення",
+    "Cost": 15000,
+    "CitySender": "c92a8f8a-2f58-4f13-9d74-d271872f3658",
+    "Sender": "b2ae9819-8fef-4a02-a1d6-2a65e5cdcaac",
+    "SenderAddress": "52353e10-16ec-4723-ac45-6a0842e30582",
+    "ContactSender": "fac557b3-8440-4e11-8eee-93360450b1d9",
+    "SendersPhone": "380660000000",
+    "CityRecipient": "fa61ec3f-70c8-409f-b614-fc2b34a53c8e",
+    "Recipient": "00240bfc-44ba-48fa-b21a-116bec10a30e",
+    "RecipientAddress": "ba81a755-6759-4673-8ddf-81bf9c4f7523",
+    "ContactRecipient": "cdf3a4ad-5f06-46cf-b141-72ff395b9fc1",
+    "RecipientsPhone": "380660000001"
+  }
+}

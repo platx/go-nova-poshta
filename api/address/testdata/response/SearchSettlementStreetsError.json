@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "SettlementRef is invalid"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20000500626"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

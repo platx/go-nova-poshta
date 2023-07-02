@@ -1,0 +1,8 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "TrackingDocument",
+  "calledMethod": "getStatusDocuments",
+  "methodProperties": {
+    "Documents": null
+  }
+}

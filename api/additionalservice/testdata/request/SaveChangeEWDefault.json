@@ -1,0 +1,19 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "AdditionalService",
+  "calledMethod": "save",
+  "methodProperties": {
+    "IntDocNumber": "206004560074695",
+    "PaymentMethod": "Cash",
+    "OrderType": "orderCargoReturn",
+    "Reason": "40a185f3-c6f3-4017-9c2a-2b9adb2e23ec",
+    "SubtypeReason": "a2cdd416-e32a-425d-9055-69f2f1c33a97",
+    "Note": "Произвольное описание",
+    "SenderContactName": "Горбунко Остап Федорович",
+    "SenderPhone": "380685024447",
+    "Recipient": "6dbdc6dc-a16b-4335-bf36-6a111fd5b922",
+    "RecipientContactName": "Іванов Іван Іванович",
+    "RecipientPhone": "380685024447",
+    "PayerType": "Recipient"
+  }
+}

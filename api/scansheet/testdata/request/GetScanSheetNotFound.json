@@ -1,0 +1,9 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "ScanSheet",
+  "calledMethod": "getScanSheet",
+  "methodProperties": {
+    "Ref": "5db6f791-db2c-453d-97a4-e73ba698e0d2",
+    "CounterpartyRef": "951607de-36d2-4bee-bf68-e83ef389df59"
+  }
+}

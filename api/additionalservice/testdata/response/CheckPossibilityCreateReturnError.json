@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "Експрес-накладна не знайдена або не існує. Перевірте номер"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20000301849"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

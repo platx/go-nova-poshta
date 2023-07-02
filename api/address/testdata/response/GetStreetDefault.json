@@ -1,0 +1,26 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Description": "1-а Вишнева",
+      "Ref": "ef905acd-e1f4-11e5-899e-005056887b8d",
+      "StreetsTypeRef": "Street",
+      "StreetsType": "вул."
+    },
+    {
+      "Description": "1-а Дамбова",
+      "Ref": "0c2b2d0a-650a-11e6-a9f2-005056887b8d",
+      "StreetsTypeRef": "Street",
+      "StreetsType": "вул."
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": {
+    "totalCount": 2799
+  },
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

@@ -1,0 +1,6 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Common",
+  "calledMethod": "getMessageCodeText",
+  "methodProperties": {}
+}

@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "data": [
+    {
+      "Ref": "8f469737-33e4-11e3-b441-0050568002cf",
+      "Description": " док-станція",
+      "DescriptionRu": " док-станция"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

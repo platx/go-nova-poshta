@@ -1,0 +1,8 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "delete",
+  "methodProperties": {
+    "Ref": "339f0b8d-da35-11ed-a60f-48df37b921db"
+  }
+}

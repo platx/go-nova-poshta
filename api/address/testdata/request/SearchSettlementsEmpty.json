@@ -1,0 +1,10 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Address",
+  "calledMethod": "searchSettlements",
+  "methodProperties": {
+    "CityName": "Київ",
+    "Limit": null,
+    "Page": null
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "data": [
+    {
+      "MessageCode": "20000100004",
+      "MessageText": "User with email exists",
+      "MessageDescriptionRU": "Пользователь с таким Email уже существует",
+      "MessageDescriptionUA": "Користувач з таким Email все існує"
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [],
+  "warningCodes": [],
+  "infoCodes": []
+}

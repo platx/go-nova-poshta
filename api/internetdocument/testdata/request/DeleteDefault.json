@@ -1,0 +1,8 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "InternetDocument",
+  "calledMethod": "delete",
+  "methodProperties": {
+    "DocumentRefs": "7142a918-c954-43c9-b985-a8df96ec922f"
+  }
+}

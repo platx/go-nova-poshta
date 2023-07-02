@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "data": [],
+  "errors": [
+    "Edit disabled for PrivatePerson Sender"
+  ],
+  "warnings": [],
+  "info": [],
+  "messageCodes": [],
+  "errorCodes": [
+    "20000801416"
+  ],
+  "warningCodes": [],
+  "infoCodes": []
+}

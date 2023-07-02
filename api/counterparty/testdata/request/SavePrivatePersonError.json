@@ -1,0 +1,14 @@
+{
+  "apiKey": "fake-token",
+  "modelName": "Counterparty",
+  "calledMethod": "save",
+  "methodProperties": {
+    "CounterpartyType": "PrivatePerson",
+    "CounterpartyProperty": "Recipient",
+    "FirstName": "",
+    "MiddleName": "Іванович",
+    "LastName": "Іванов",
+    "Phone": "380997979789",
+    "Email": "test@i.com"
+  }
+}

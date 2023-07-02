@@ -1,0 +1,40 @@
+run:
+  timeout: 2m
+  issues-exit-code: 1
+
+linters:
+  disable-all: true
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - unused
+    - prealloc
+    - wsl
+    - durationcheck
+    - stylecheck
+    - structcheck
+    - typecheck
+    - revive
+    - govet
+    - gofmt
+    - unused
+    - bodyclose
+    - dupl
+    - errorlint
+    - varcheck
+
+linters-settings:
+  govet:
+    disable:
+      - copylocks
+  gosimple:
+    go: "1.20"
+
+output:
+  format: colored-line-number
+
+issues:
+  max-same-issues: 0
+  max-issues-per-linter: 0
