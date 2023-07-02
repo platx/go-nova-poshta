@@ -93,7 +93,7 @@ func main() {
     client := go_nova_poshta.NewClient(adapter.NewConfig("your_api_token"))
 
     cities, err := client.Address().GetCities(address.GetCitiesRequest{
-        FindByString: utils.PTR("київ"),
+        FindByString: utils.PTR("Київ"),
         Page: utils.PTR(1),
         Limit: utils.PTR(10),
     })
